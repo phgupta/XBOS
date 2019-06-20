@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>SolarPlus</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css" />
+
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='assets/css/particles.css') }}">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+</head>
+
+
+<body>
+    <div id="particles-js"></div>
+    <div class="">
+        <nav>
+            <div class="nav-wrapper dashe-blue">
+                <a href="/" class="brand-logo">Back</a>
+            </div>
+
+        </nav>
+    <div class="column is-4 is-offset-4">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="notification is-danger">
+                    {{ messages[0] }}. Go to <a href="{{ url_for('auth.login') }}">login page</a>.
+                </div>
+            {% endif %}
+            {% endwith %}
+        <h3 class="title" style="color: white">Sign Up</h3>
+        <div class="box">
+    
+            <form method="POST" action="/signup">
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="email" name="email" placeholder="Email" autofocus="">
+                    </div>
+                </div>
+    
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="text" name="name" placeholder="Name" autofocus="">
+                    </div>
+                </div>
+    
+                <div class="field">
+                    <div class="control">
+                        <input class="input is-large" type="password" name="password" placeholder="Password">
+                    </div>
+                </div>
+    
+                <button class="button is-block is-info is-large is-fullwidth">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE HTML>
+<!--
+	Spectral by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+
+<head>
+	<title>Solarplus</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="{{ url_for('static', filename='assets/css/main.css') }}">
+	<link rel="stylesheet" type="text/css" media="screen"
+		href="{{ url_for('static', filename='assets/css/particles.css') }}">
+	<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/noscript.css') }}"> -->
+	<!-- <link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" media="screen" href="assets/css/style.css">
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript> -->
+</head>
+
+<body class="landing is-preload">
+
+	<!-- Page Wrapper -->
+	<div id="page-wrapper">
+		<div id="particles-js"></div>
+
+		<!-- Header -->
+		<!-- <header id="header" class="alt">
+						<h1><a href="index.html">Spectral</a></h1>
+					</header> -->
+
+		<!-- Banner -->
+		<section id="banner">
+			<div class="inner">
+				<h2>Solarplus</h2>
+				<ul class="actions special">
+					<li><a href="/login" class="button primary">Login / Signup</a></li>
+				</ul>
+			</div>
+			<a href="#one" class="more scrolly">Learn More</a>
+		</section>
+
+		<!-- One -->
+		<section id="one" class="wrapper style1 special">
+			<div class="inner">
+				<header class="major">
+					<h2>Solarplus<br /></h2>
+					<p>Location: Humbolt County</p>
+				</header>
+				<iframe src="https://snazzymaps.com/embed/156887" width="100%" height="500px"
+					style="border:none;"></iframe>
+			</div>
+		</section>
+
+	
+		<section id="two" class="wrapper alt style2">
+			<section class="spotlight">
+				<div class="image"><img src="static/assets/img/pic01.jpg" alt="" /></div>
+				<div class="content">
+					<h2>Data Visualization and Analysis<br /></h2>
+					<p>Solarplus provides a means by which the live sensor data currently being monitored at the
+						building in question, can be streamed into the system which would then perform analyses and
+						visualizations to give facilities managers the relevant information necessary for the proper
+						functioning of the building and its environment</p>
+				</div>
+			</section>
+			<section class="spotlight">
+				<div class="image"><img src="static/assets/img/pic03.jpg" alt="" /></div>
+				<div class="content">
+					<h2>Hardware Configuration Management<br /></h2>
+					<p>Solarplus also provides a means in which a user is able to interact with certain devices
+						to change its setpoint values as well as change its schedule.
+					</p>
+				</div>
+			</section>
+		</section>
+
+
+		<!-- CTA -->
+		<section id="cta" class="wrapper style4">
+			<div class="inner">
+				<header>
+					<h2>Find Out More</h2>
+				</header>
+				<ul class="actions stacked">
+					<li><a href="/login" class="button fit primary">Register</a></li>
+
+				</ul>
+			</div>
+		</section>
+
+		<!-- Footer -->
+
+
+	</div>
+
+	<!-- Scripts -->
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.min.js') }}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.scrollex.min.js') }}">
+	</script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.scrolly.min.js') }}">
+	</script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/browser.min.js') }}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/breakpoints.min.js') }}"></script>
+
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/util.js') }}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/main.js') }}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+.title{
+  margin: 0 auto;
+  width: 50%;
+  text-align: center;
+  padding-bottom: 10px;
+  font-size: 32px;
+  color: #2E4B62;
+}
+
+.wrapper-contact {
+  width: 50%;
+  height: 50%;
+  margin: 5% auto 0 auto; 
+}
+#contact-font {
+  font-size: 16px;
+  font-family: Helvetica, sans-serif;
+  color: black;
+}
+.form-animated {
+  text-align: center; 
+
+}
+.shadow-animated {
+  box-shadow: 0px 0px 20px 5px #AAA;
+  opacity: 0.5;
+  border-radius: 100px;
+  width: 45%; 
+  margin: 40px auto 0 auto;
+  padding: 0 10px;  
+  -webkit-animation: shadow 1.5s infinite;
+}
+.field-in {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  width: 50%;
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+}
+.fieldname-contact {
+  background-color: #EE78D1;  
+  border-bottom: 5px solid #CB64B2;
+}
+.fieldname-contact:hover{
+  background-color: #DF1B76;
+  border-bottom: 5px solid #B2175F;
+}
+.fieldname-contact:focus, .fieldemail-contact:focus, .fieldphone-contact:focus, .message-contact:focus{
+  outline: none;
+  padding:15px;
+}
+.fieldemail-contact {
+  background-color: #7239C1;  
+  border-bottom: 5px solid #502789;
+}
+.fieldemail-contact:hover{
+  background-color: #2014CB;
+  border-bottom: 5px solid #18108E;
+}
+
+.fieldphone-contact {
+  background-color: #EE78D1;  
+  border-bottom: 5px solid #CB64B2;
+}
+.fieldphone-contact:hover{
+  background-color: #DF1B76;
+  border-bottom: 5px solid #B2175F;
+}
+
+.message-contact {   
+  background-color: #0F9BE6;
+  border-bottom: 5px solid #1185C3;
+  overflow: hidden;
+  height: 50px;
+}
+.message-contact:hover{
+  background-color: #2DD7BB;
+  border-bottom: 5px solid #2BB09A;
+  height: 150px;
+}
+.submit-contact{
+  border-radius:5px;
+  padding:10px;
+  background-color: #EE78D1;  
+  border: none;
+  border-bottom: 5px solid #CB64B2;  
+  -webkit-transition: all 0.5s ease 0s;
+  -moz-transition: all 0.5s ease 0s;
+  transition: all 0.5s ease 0s;
+}
+.submit-contact:hover{
+  -webkit-transform: translate(0, 4px);
+  border-bottom: 2px solid #CB64B2;  
+  box-shadow: inset 0px 0px 10px 10px #CF5DB2;
+  cursor: pointer;
+}
+::-webkit-input-placeholder {
+   color: white;
+}
+
+:-moz-placeholder { 
+   color: white;
+}
+
+::-moz-placeholder { 
+   color: white; 
+}
+
+:-ms-input-placeholder {  
+   color: white;  
+}
+
+@-webkit-keyframes bounce{
+  0%{
+    
+  }
+  50%{
+    -webkit-transform: translate(0, 8px);
+  }
+}
+@-moz-keyframes bounce{
+  0%{
+    
+  }
+  50%{
+    -moz-transform: translate(0, 8px);
+  }
+}
+@keyframes bounce{
+  0%{
+    
+  }
+  50%{
+    transform: translate(0, 8px);
+  }
+}
+@-webkit-keyframes shadow{
+  0%{
+    
+  }
+  50%{
+    opacity: 0.8;
+    width: 50%;
+  }
+}
+@-moz-keyframes shadow{
+  0%{
+    
+  }
+  50%{
+    opacity: 0.8;
+    width: 50%;
+  }
+}
+@keyframes shadow{
+  0%{
+    
+  }
+  50%{
+    opacity: 0.8;
+    width: 50%;
+  }
+}

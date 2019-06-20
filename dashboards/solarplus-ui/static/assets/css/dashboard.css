@@ -1,0 +1,16 @@
+.inner-card-padding{
+    padding-bottom: 30%;
+  }
+  .card-margin{
+    padding-bottom: 2%;
+  }
+  /* .row-padding{
+    padding: ;
+  } */
+  .outline{
+    margin-left:2%;
+    margin-right: 2%;
+    width: 80px;
+    height: 30px;
+    border: 1px solid darkslategrey;
+  }

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>SolarPlus</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/nouislider.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/preloader.js') }}"></script>
+	<link rel="stylesheet" type="text/css" media="screen"
+		href="{{ url_for('static', filename='assets/css/particles.css') }}">
+	<!-- <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/plugins/font-awesome/font-awesome.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/plugins/bootstrap/bootstrap.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/plugins/venobox/venobox.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/plugins/slick/slick.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/navbar.css') }}"> -->
+
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+</head>
+
+<body>
+	<div class="preloader">
+		<img src="{{ url_for('static', filename='assets/img/preloader.gif') }}" alt="preloader">
+	</div>
+	<div id="particles-js"></div>
+
+	<div class="">
+		<ul id="dropdown1" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		<ul id="dropdown2" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		{% if id in admin %}
+		<nav>
+			<div class="nav-wrapper dashe-blue">
+				<a href="/dashboard" class="brand-logo">SolarPlus</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+
+					<li>
+						<div id="intelligent-control"></div>
+					</li>
+					<li>
+						<span id="intelligence-control-on-off"> Intelligent Control off</span>
+					</li>
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="sidenav" id="mobile-demo">
+
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+			</div>
+		</nav>
+		{% else %}
+		<nav>
+			<div class="nav-wrapper dashe-blue">
+				<a href="/dashboard" class="brand-logo">SolarPlus</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="/dashboard">Dashboard</a></li>	
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="sidenav" id="mobile-demo">
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+			</div>
+		</nav>
+		{% endif %}
+
+	</div>
+	<div class="row " style="margin-top:10%">
+		<div class="col s4 offset-s4">
+			<div class="card horizontal ">
+				<div class="card-stacked hoverable">
+					<div class="col s10 offset-s1 card-content">
+						<p class="center-align" style="font-size: 200%">{{name}}</p>
+						<br>
+						<p class="center-align" style="font-size: 100%">{{email}}</p>
+						<p class="center-align" style="font-size: 100%">{{id}}</p>
+					</div>
+					<div class="divider"></div>
+					<div class="col s10 offset-s1">
+						<p>
+							New Password
+						</p>
+						<input name="New Password">
+						<p>
+							Confirm New Password
+						</p>
+						<input name="Confirm Password">
+						<button class="btn waves-effect waves-light col s3 offset-s9" style="margin-bottom:5%;" type="submit" name="action">Submit
+								<i class="material-icons right">send</i>
+							  </button>
+					</div>
+
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+
+</body>
+
+<script src="https://cdn.rawgit.com/maxdow/skycons/master/skycons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/DR/chart-highchart.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/navbar.js') }}"></script>
+
+
+</html>

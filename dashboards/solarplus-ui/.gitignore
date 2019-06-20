@@ -1,0 +1,4 @@
+.env
+*.json
+*.egg-info
+config.py

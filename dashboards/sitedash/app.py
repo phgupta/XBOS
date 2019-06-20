@@ -23,6 +23,13 @@ import drprediction
 
 from xbos import get_client
 from xbos.services import hod, mdal
+
+SITE = 'ciee'
+# SITE = 'jesse-turner-center'
+# SITE = 'orinda-community-center'
+# SITE = 'jesse-turner-center'
+OURTZ=pytz.timezone("US/Pacific")
+
 import config
 
 def crossdomain(origin=None, methods=None, headers=None,
@@ -151,7 +158,7 @@ def power_summary(last, bucketsize):
         print zip(times,readings)
         df = pd.DataFrame(readings,index=times)
         df.columns = ['readings']
-        return df.dropna().to_json()
+        return df.fillna("myNullVal").to_json()
 
     query = {
         "Composition": ["meter"],
@@ -177,7 +184,7 @@ def power_summary(last, bucketsize):
         return
     else:
         resp['df'].columns = ['readings']
-        return resp['df'].dropna().to_json()
+        return resp['df'].fillna("myNullVal").to_json()
     return "ok"
 
 @app.route('/api/energy/<last>/in/<bucketsize>')
@@ -221,7 +228,7 @@ def energy_summary(last, bucketsize):
                 times.append(config.TZ.localize(t1_))
                 readings.append(resp['df']['readings'].sum())
         df = pd.DataFrame(readings,index=times)
-        return df.dropna().to_json()
+        return df.fillna("myNullVal").to_json()
     print start_date
     query = {
         "Composition": ["meter"],
@@ -248,7 +255,7 @@ def energy_summary(last, bucketsize):
     else:
         resp['df'].columns = ['readings'] # in k@
         resp['df']['readings']/=4. # divide by 4 to get 15min (kW) -> kWh
-        return resp['df'].dropna().resample(bucketsize).apply(sum).to_json()
+        return resp['df'].fillna("myNullVal").resample(bucketsize).apply(sum).to_json()
     return "ok"
 
 @app.route('/api/power')
@@ -353,8 +360,55 @@ SELECT * FROM %s WHERE {
 
 @app.route('/api/hvac/day/in/<bucketsize>')
 @crossdomain(origin="*")
+
+def hvac_summary(bucketsize):
+    # first, determine the start date from the 'last' argument
+    today = get_today()
+    q = """SELECT * FROM %s WHERE {
+          ?rtu rdf:type brick:RTU .
+          ?rtu bf:feeds ?zone .
+          ?zone rdf:type brick:HVAC_Zone .
+          ?rtu bf:isControlledBy ?tstat .
+          ?tstat bf:hasPoint ?sensor .
+          ?sensor rdf:type/rdfs:subClassOf* brick:Temperature_Sensor .
+          ?sensor bf:uuid ?sensor_uuid .
+    };
+    """
+    res = hodclient.do_query(q % SITE)
+    zones = {}
+    for row in res['Rows']:
+        zones[row['?sensor_uuid']] = row['?zone']
+    print zones
+    query = {
+        "Composition": ["tstat_temp"],
+        "Selectors": [mdal.MEAN],
+        "Variables": [
+            {"Name": "tstat_temp",
+             "Definition": q % SITE,
+             "Units": "F"}
+        ],
+        "Time": {
+            "T0": today.strftime("%Y-%m-%d %H:%M:%S %Z"),
+            "T1": datetime.now(OURTZ).strftime("%Y-%m-%d %H:%M:%S %Z"),#(monday + timedelta(days=7)).strftime("%Y-%m-%d %H:%M:%S"),
+            "WindowSize": bucketsize,
+            "Aligned": True
+        },
+    }
+    print query
+    resp = mdalclient.do_query(query, timeout=60)
+    if 'error' in resp:
+        print 'ERROR', resp
+        abort(500)
+        abort(Response(status=resp['error']))
+        return
+    else:
+        resp['df'].columns = [zones.get(x,x) for x in resp['df'].columns]
+        return resp['df'].fillna("myNullVal").to_json()
+    return "ok"
+
 def serve_historipcal_hvac(bucketsize):
     return jsonify(hvactest.get_hvac_streams_per_zone(bucketsize))
+
 
 @app.route('/api/prediction/hvac/day/in/<bucketsize>')
 @crossdomain(origin="*")
@@ -430,7 +484,7 @@ def setpoint_today():
     for k in resp.keys():
         v = resp.pop(k)
         zone = zones.get(k,k)
-        v = v[v.dropna().diff() != 0]
+        v = v[v.fillna("myNullVal").diff() != 0]
         resp[zone] = json.loads(v.to_json()) # this is the way to solve weird serialization issues
 
     query["Composition"] = ["cooling"]
@@ -443,7 +497,7 @@ def setpoint_today():
     for k in cool_resp.keys():
         v = cool_resp.pop(k)
         zone = zones.get(k,k)
-        v = v[v.dropna().diff() != 0]
+        v = v[v.fillna("myNullVal").diff() != 0]
         v = json.loads(v.to_json())
         for ts, hsp in resp[zone].items():
             csp = v.get(ts)

@@ -1,0 +1,278 @@
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>SolarPlus</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/vendor/library.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/core/style.min.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/nouislider.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/preloader.js') }}"></script>
+	<link rel="stylesheet" type="text/css" media="screen"
+		href="{{ url_for('static', filename='assets/css/particles.css') }}">
+	<!-- <link rel="stylesheet" type="text/css" href="static/styles/css/core/style.min.css">
+	<link rel="stylesheet" type="text/css" href="static/styles/css/materialize.css">
+	<link rel="stylesheet" type="text/css" href="static/styles/css/nouislider.css"> -->
+
+
+
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/weather/home.js') }}"></script>
+
+
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+</head>
+
+<body id="body">
+	<div class="preloader">
+		<img src="{{ url_for('static', filename='assets/img/preloader.gif') }}" alt="preloader">
+	</div>
+	<div id="particles-js"></div>
+	<div class="">
+			<ul id="dropdown1" class="dropdown-content">
+					<li><a href="/profile">Profile</a></li>
+					<li class="divider"></li>
+					<li><a id="logout-button" href="/logout">Logout</a></li>
+				</ul>
+				<ul id="dropdown2" class="dropdown-content">
+						<li><a href="/profile">Profile</a></li>
+						<li class="divider"></li>
+						<li><a id="logout-button" href="/logout">Logout</a></li>
+					</ul>
+					{% if id in admin %}
+					<nav>
+						<div class="nav-wrapper dashe-blue">
+							<a href="/dashboard" class="brand-logo">SolarPlus</a>
+							<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+							<ul class="right hide-on-med-and-down">
+			
+								<li>
+									<div id="intelligent-control"></div>
+								</li>
+								<li>
+									<span id="intelligence-control-on-off"> Intelligent Control off</span>
+								</li>
+								<li><a href="/dashboard">Dashboard</a></li>
+								<li><a href="/setpoints">Setpoints</a></li>
+								<li><a href="/weather">Weather</a></li>
+								<li><a href="/analysis">Analysis</a></li>
+								<li><a href="/intelligence">Intelligence</a></li>
+								<li><a href="/contact">Contact</a></li>
+								<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+											Hi, {{name}}
+										</span>
+										<i class="material-icons right">arrow_drop_down</i></a></li>
+							</ul>
+							<ul class="sidenav" id="mobile-demo">
+			
+								<li><a href="/dashboard">Dashboard</a></li>
+								<li><a href="/setpoints">Setpoints</a></li>
+								<li><a href="/weather">Weather</a></li>
+								<li><a href="/analysis">Analysis</a></li>
+								<li><a href="/intelligence">Intelligence</a></li>
+								<li><a href="/contact">Contact</a></li>
+								<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+											Hi, {{name}}
+										</span>
+										<i class="material-icons right">arrow_drop_down</i></a></li>
+							</ul>
+						</div>
+					</nav>
+					{% else %}
+					<nav>
+						<div class="nav-wrapper dashe-blue">
+							<a href="/dashboard" class="brand-logo">SolarPlus</a>
+							<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+							<ul class="right hide-on-med-and-down">
+								<li><a href="/dashboard">Dashboard</a></li>	
+								<li><a href="/weather">Weather</a></li>
+								<li><a href="/contact">Contact</a></li>
+								<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+											Hi, {{name}}
+										</span>
+										<i class="material-icons right">arrow_drop_down</i></a></li>
+							</ul>
+							<ul class="sidenav" id="mobile-demo">
+								<li><a href="/dashboard">Dashboard</a></li>
+								<li><a href="/weather">Weather</a></li>
+								<li><a href="/contact">Contact</a></li>
+								<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+											Hi, {{name}}
+										</span>
+										<i class="material-icons right">arrow_drop_down</i></a></li>
+							</ul>
+						</div>
+					</nav>
+					{% endif %}
+	</div>
+
+	<!-- weather! -->
+	<div id="weather-box">
+		<div class="row ">
+			<div class="col-md-5 col-lg-5 col-xl-4 left">
+				<div class="location">
+					<div>
+						<div id="location"></div>
+						<div id="time"></div>
+					</div>
+				</div>
+
+				<div id="weather" class="temperature">
+					<canvas id="icon0" width="128" height="128"></canvas>
+					<div>
+						<div id="temperature-holder">
+							<div id="temperature"></div>
+							<div id="temperature-format">
+								<a id="changeFormat" href="javascript:void(0);">°C</a>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="doppler">
+					<img class="doppler" src="http://radar.weather.gov/ridge/Overlays/Topo/Short/DAX_Topo_Short.jpg"
+						alt="IMG Not found">
+					<img id="doppler-dax" class="doppler-gif"
+						src="https://radar.weather.gov/ridge/RadarImg/N0R/DAX_N0R_0.gif" alt="IMG Not found">
+					<img class="doppler-gif"
+						src="http://radar.weather.gov/ridge/Overlays/Cities/Short/DAX_City_Short.gif"
+						alt="IMG Not found">
+				</div>
+
+				<div id="additional">
+
+
+					<div class="row">
+						<div class="col-lg-6 pt-2 pb-2" id="fit">
+							<div>
+								Visibility:
+								<span id="summary"></span>
+							</div>
+						</div>
+						<!-- precipitation -->
+						<div class="col-lg-6 pt-2 pb-2" id="fit">
+							<div>
+								Precipitation:
+								<span id="precipitation"></span>
+							</div>
+						</div>
+						<!-- humidity -->
+						<div class="col-lg-6 pt-2 pb-2" id="fit">
+							<div>
+								Humidity:
+								<span id="humidity"></span>
+							</div>
+						</div>
+						<!-- windSpeed -->
+						<div class="col-lg-6 pt-2 pb-2" id="fit">
+							<div>
+								Windspeed:
+								<span id="windSpeed"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-7 col-lg-7 col-xl-8 bottom">
+				<div class="wrapper2">
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon1" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max0"></div>
+							<div class="min" id="min0"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon2" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max1"></div>
+							<div class="min" id="min1"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon3" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max2"></div>
+							<div class="min" id="min2"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon4" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max3"></div>
+							<div class="min" id="min3"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon5" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max4"></div>
+							<div class="min" id="min4"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon6" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max5"></div>
+							<div class="min" id="min5"></div>
+						</div>
+					</div>
+					<div class="future">
+						<div class="day"></div>
+						<canvas id="icon7" width="64" height="64"></canvas>
+						<div class="min-max-holder">
+							<div class="max" id="max6"></div>
+							<div class="min" id="min6"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+
+<script src="https://cdn.rawgit.com/maxdow/skycons/master/skycons.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/weather/home.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/weather/doppler.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/navbar.js') }}"></script>
+
+<script>
+	var tempVals = [];
+	tempVals[0] = document.getElementById("max0");
+	tempVals[1] = document.getElementById("max1");
+	tempVals[2] = document.getElementById("max2");
+	tempVals[3] = document.getElementById("max3");
+	tempVals[4] = document.getElementById("max4");
+	tempVals[5] = document.getElementById("max5");
+	tempVals[6] = document.getElementById("max6");
+	localStorage.setItem("tempVals", JSON.stringify(tempVals));
+	console.log(localStorage.getItem("tempVals"));
+	
+</script>
+
+
+</html>

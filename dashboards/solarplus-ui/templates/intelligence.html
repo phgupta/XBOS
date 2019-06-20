@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>SolarPlus</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/preloader.js') }}"></script>
+	<!-- <link rel="stylesheet" type="text/css" href="static/styles/css/materialize.css">
+	<link rel="stylesheet" type="text/css" href="static/styles/css/nouislider.css"> -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" media="screen"
+		href="{{ url_for('static', filename='assets/css/particles.css') }}">
+</head>
+
+<body id="body" class="">
+	<div class="preloader">
+		<img src="{{ url_for('static', filename='assets/img/preloader.gif') }}" alt="preloader">
+	</div>
+	<div id="particles-js"></div>
+	<div class="">
+		<ul id="dropdown1" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		<ul id="dropdown2" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		<nav>
+			<div class="nav-wrapper dashe-blue">
+				<a href="/dashboard" class="brand-logo">SolarPlus</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+					<li>
+						<div id="intelligent-control"></div>
+					</li>
+					<li>
+						<span id="intelligence-control-on-off"> Intelligent Control off</span>
+					</li>
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="sidenav" id="mobile-demo">
+
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<div class="container">
+		<div class="section">
+			<div class="row valign-wrapper">
+				<div class="col s6">
+					<h4 class="white-text" style="margin-bottom: 0;">Intelligent Control</h4>
+				</div>
+
+				<div class="col s6 right-align">
+
+					<!-- <a id="save-modes" class="waves-effect waves-light btn">save<i
+							class="material-icons right">save</i></a> -->
+				</div>
+			</div>
+
+		</div>
+		<div class="switch">
+			<label>
+				<span class="white-text" class="swi-text">off</span>
+				<input id="check" class="ogswitch" type="checkbox">
+				<span class="lever"></span>
+				<span class="white-text" class="swi-text">on</span>
+			</label>
+		</div>
+	</div>
+
+
+</body>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+
+<!-- <script type="text/javascript" src="{{url_for('static', filename='assets/js/script.js') }}"></script>--->
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/intelligence/intelligence.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+<script>
+	$(document).ready(function () {
+		$('.sidenav').sidenav();
+	});
+</script>
+
+</html>

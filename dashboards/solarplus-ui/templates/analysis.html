@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>XBOS Dashboard</title>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+    <link rel='shortcut icon' type='image/png' href='assets/img/favicon2.png' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/contact-form.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='assets/js/preloader.js') }}"></script>
+    <link rel="stylesheet" type="text/css" media="screen"
+        href="{{ url_for('static', filename='assets/css/particles.css') }}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+</head>
+
+<body id="body" class="">
+    <div class="preloader">
+        <img src="{{ url_for('static', filename='assets/img/preloader.gif') }}" alt="preloader">
+    </div>
+    <div id="particles-js"></div>
+    <div class="">
+        <ul id="dropdown1" class="dropdown-content">
+            <li><a href="/profile">Profile</a></li>
+            <li class="divider"></li>
+            <li><a id="logout-button" href="/logout">Logout</a></li>
+        </ul>
+        <ul id="dropdown2" class="dropdown-content">
+            <li><a href="/profile">Profile</a></li>
+            <li class="divider"></li>
+            <li><a id="logout-button" href="/logout">Logout</a></li>
+        </ul>
+        <nav>
+            <div class="nav-wrapper dashe-blue">
+                <a href="/dashboard" class="brand-logo">SolarPlus</a>
+                <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <div id="intelligent-control"></div>
+                    </li>
+                    <li>
+                        <span id="intelligence-control-on-off"> Intelligent Control off</span>
+                    </li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/setpoints">Setpoints</a></li>
+                    <li><a href="/weather">Weather</a></li>
+                    <li><a href="/analysis">Analysis</a></li>
+                    <li><a href="/intelligence">Intelligence</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+                                Hi, {{ name}}
+                            </span>
+                            <i class="material-icons right">arrow_drop_down</i></a></li>
+                </ul>
+                <ul class="sidenav" id="mobile-demo">
+
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/setpoints">Setpoints</a></li>
+                    <li><a href="/weather">Weather</a></li>
+                    <li><a href="/analysis">Analysis</a></li>
+                    <li><a href="/intelligence">Intelligence</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+                                Hi, {{ name}}
+                            </span>
+                            <i class="material-icons right">arrow_drop_down</i></a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <div class="row card-margin" style="margin-top:5%">
+        <div class="col s10 offset-s1">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">About</span>
+
+                    <p> 
+                        The following prediction chart takes the maximum temperatures of the upcoming week from the Weather tab, and uses them to
+                        give a chart that shows the predicted solar power production from the solar panels at the facility for that 
+                        day. The predictions are made using Artificial Intelligence tools that predict based on past data from the facility. 
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row card-margin" style="margin-top:5%">
+        <div class="col s10 offset-s1">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title">Prediction Chart</span>
+
+                    <div class="chart-container" ; id="predictionChart">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+
+
+
+
+
+<!--<script type="text/javascript" src="assets/js/amazonSNS/index.js"></script>-->
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/analysis-mlgraph.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/logout.js') }}"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.451.0.min.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/navbar.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/highcharts.js') }}"></script>
+
+
+
+</html>

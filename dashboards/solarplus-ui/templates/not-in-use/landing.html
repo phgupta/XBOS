@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Welcome to Solarplus!</title>
+  <meta charset='utf-8'>
+  <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/particle-style.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/style.css') }}">
+
+
+  <script type="text/javascript" src="{{url_for('static', filename='assets/js/login/jquery-1.9.1.min.js') }}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='assets/js/login/jquery.leanModal.min.js') }}"></script>
+
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <!-- jQuery plugin leanModal under MIT License http://leanmodal.finelysliced.com.au/ -->
+</head>
+
+<body id="body">
+
+  <div id="w">
+    <div id="content">
+      <h1>Welcome to Solarplus-Dev!</h1>
+      <p>Click this to sign up/login to the Solarplus portal</p>
+      <center>
+        <a href="/login" class="flatbtn" id="newmodaltrigger">Login / Sign Up</a>
+        <!-- <a href="#loginmodal" class="flatbtn" id="modaltrigger">Login</a> -->
+      </center>
+
+    </div>
+  </div>
+
+  <!-- <div id="loginmodal" style="display:none;">
+    <h1>Employee Login</h1>
+
+    <form id="loginform" name="loginform" method="post">
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username" class="txtfield" tabindex="1">
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" class="txtfield" tabindex="2">
+
+      <a href="login.html">New User?</a>
+
+      <div class="center"><input type="submit" name="loginbtn" id="loginbtn" class="flatbtn-blu hidemodal"
+          value="Log In" tabindex="3" onclick="window.location.href='index.html'"></div>
+    </form>
+
+  </div>
+
+  <div id="regmodal" style="display:none;">
+    <h1>Employee Sign Up</h1>
+
+    <form id="registerform" name="registerform" method="post">
+      <label for="firstname">First Name:</label>
+      <input type="text" name="firstname" id="firstname" class="txtfield" tabindex="1">
+
+      <label for="lastname">Last Name:</label>
+      <input type="text" name="lastname" id="lastname" class="txtfield" tabindex="2">
+
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" class="txtfield" tabindex="3">
+
+      <label for="username">Username:</label>
+      <input type="text" name="username" id="username" class="txtfield" tabindex="4">
+
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" class="txtfield" tabindex="5">
+
+      <label for="conpassword">Confirm Password:</label>
+      <input type="password" name="conpassword" id="conpassword" class="txtfield" tabindex="6">
+
+      <a href="login.html">Back to Login?</a>
+      <div id="key" class="g-recaptcha" data-sitekey="key" ></div>
+
+      <div class="center"><input type="submit" name="loginbtn" id="loginbtn" class="flatbtn-blu showmodal"
+          value="Sign Up" tabindex="7"></div>
+    </form>
+
+  </div> -->
+
+
+  <div id="particles-js">
+    <canvas class="particles-js-canvas-el" width="3730" height="2416" style="width: 100%; height: 100%;"></canvas>
+  </div>
+
+  <!-- <script type="text/javascript">
+    $(function () {
+      $('#loginform').submit(function (e) {
+        return false;
+      });
+
+      $('#modaltrigger').leanModal({
+        top: 110,
+        overlay: 0.45,
+        closeButton: ".hidemodal"
+      });
+    });
+  </script>
+
+  <script type="text/javascript">
+    $(function () {
+      $('#registerform').submit(function (e) {
+        return false;
+      });
+
+      $('#newmodaltrigger').leanModal({
+        top: 110,
+        overlay: 0.45,
+        closeButton: ".showmodal"
+      });
+    });
+  </script> -->
+
+  <script type="text/javascript" src="{{url_for('static', filename='assets/js/login/particles.min.js') }}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='assets/js/login/app.js') }}"></script>
+
+
+
+</body>
+
+</html>

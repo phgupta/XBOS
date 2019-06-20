@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>SolarPlus</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<!-- <link rel='shortcut icon' type='image/png' href='./assets/img/favicon1.png'/> -->
+	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/nouislider.css') }}">
+	<!-- <link rel="stylesheet" type="text/css" href="static/styles/css/materialize.css">
+	<link rel="stylesheet" type="text/css" href="static/styles/css/nouislider.css"> -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+</head>
+
+<body id="body">
+
+	<div class="navbar-fixed">
+		<nav>
+			<div class="nav-wrapper tp-blue">
+				<a href="/index" class="brand-logo">SolarPlus</a>
+				<ul id="nav-mobile" class="right hide-on-med-and-down">
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li class="active"><a href="#">DR</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a id="logout-button" href="/logout">Logout</a></li>
+				</ul>
+			</div>
+
+		</nav>
+	</div>
+
+	<div class="row" id="DRROW" style="display: none;"></div>
+	<div class="row"></div>
+	<div class="row"></div>
+
+
+	<div class="container">
+
+		<input type="date" id="Date1" value="2017-12-31">
+		<input type="date" id="Date2" value="2018-01-01">
+
+		<p>Click the button to get the date of the date field.</p>
+
+		<p>File Name Text Field (Enter Below)</p>
+		<input type="text" id="filename">
+
+		<div class="row"></div>
+		<div class="row"></div>
+
+		<p>Feature 1 Text Field (Enter Below)</p>
+		<input type="text" id="feature1">
+
+		<div class="row"></div>
+		<div class="row"></div>
+
+		<p>Feature 2 Text Field (Enter Below)</p>
+
+		<input type="text" id="feature2">
+
+		<div class="row"></div>
+
+		<!--div class="rowGraphButtons">
+            <a id="renderBtn" class="waves-effect waves-light btn blue">Generate Graph
+                <i class="material-icons right">insert_chart</i>
+            </a>
+            <a id="linechartCSV" class="waves-effect waves-light btn blue">Download CSV
+                <i class="material-icons right">file_download</i>
+            </a>
+        </div -->
+
+		<div class="rowGraphButtons-highchart">
+			<a id="renderBtn-highchart" class="waves-effect waves-light btn blue">Generate Graph
+				<i class="material-icons right">insert_chart</i>
+			</a>
+			<a id="linechartCSV-highchart" class="waves-effect waves-light btn blue">Download CSV
+				<i class="material-icons right">file_download</i>
+			</a>
+		</div>
+
+
+		<div class="chart-container" ; id="myChart">
+		</div>
+
+
+
+		<!--<div id="bldng-chart" class="section z-depth-1"> 2
+			<div class="row valign-wrapper">
+				<div id="bldng-DR" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="bldng-reset" class="scale-transition scale-out waves-effect waves-light btn">Reset Zoom</a></div>
+		</div>
+
+		<div id="zone-chart" class="section z-depth-1" style="display: none;">
+			<div class="row valign-wrapper">
+				<div id="zone-DR" class="col s12"></div>
+			</div>
+			<div class="center-align"><a id="zone-reset" class="waves-effect waves-light btn">Reset Zoom</a></div>
+		</div> -->
+
+		<!--upto this point it's the DR tab (starting from bldng-chart)-->
+
+		<!-- <a class="btn tooltipped" data-position="top" data-tooltip="jkbvkghjhkjg">Hover me!</a> -->
+
+		<div class="row"></div>
+
+	</div>
+
+
+
+
+</body>
+<script>
+	document.getElementById('logout-button').addEventListener('click', (event) => {
+		event.preventDefault()
+
+		const signoutWindow = window.open(
+			'https://dev-693782.okta.com/login/signout',
+			'okta-signout',
+			//'height=1,width=1',
+			'toolbar=no,status=no,menubar=no,scrollbars=no,resizable=no,left=10000, top=10000, width=10, height=10, visible=none'
+		)
+
+		setTimeout(() => {
+			signoutWindow.close()
+			window.location = document.getElementById('logout-button').href
+		}, 1000)
+	})
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/script.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/DR/chart-highchart.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/DR/DR.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/DR/zone-chart.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/DR/bldng-chart.js') }}"></script>
+
+</html>

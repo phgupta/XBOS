@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>SolarPlus</title>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width,initial-scale=1.0'>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='assets/img/logo.png') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/materialize.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='assets/css/nouislider.css') }}">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script type="text/javascript" src="{{url_for('static', filename='assets/js/preloader.js') }}"></script>
+	<link rel="stylesheet" type="text/css" media="screen"
+		href="{{ url_for('static', filename='assets/css/particles.css') }}">
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+</head>
+
+<body id="body" class="">
+	<div class="preloader">
+		<img src="{{ url_for('static', filename='assets/img/preloader.gif') }}" alt="preloader">
+	</div>
+	<div id="particles-js"></div>
+	<div class="">
+		<ul id="dropdown1" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		<ul id="dropdown2" class="dropdown-content">
+			<li><a href="/profile">Profile</a></li>
+			<li class="divider"></li>
+			<li><a id="logout-button" href="/logout">Logout</a></li>
+		</ul>
+		<nav>
+			<div class="nav-wrapper dashe-blue">
+				<a href="/dashboard" class="brand-logo">SolarPlus</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+					<li>
+						<div id="intelligent-control"></div>
+					</li>
+					<li>
+						<span id="intelligence-control-on-off"> Intelligent Control off</span>
+					</li>
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger" href="#!" data-target="dropdown1"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+				<ul class="sidenav" id="mobile-demo">
+
+					<li><a href="/dashboard">Dashboard</a></li>
+					<li><a href="/setpoints">Setpoints</a></li>
+					<li><a href="/weather">Weather</a></li>
+					<li><a href="/analysis">Analysis</a></li>
+					<li><a href="/intelligence">Intelligence</a></li>
+					<li><a href="/contact">Contact</a></li>
+					<li><a class="dropdown-trigger2" href="#!" data-target="dropdown2"><span>
+								Hi, {{name}}
+							</span>
+							<i class="material-icons right">arrow_drop_down</i></a></li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+
+
+	<div id="DRBG" class="row center-align z-depth-1 scale-transition pulse scale-out" style="line-height: 2.25;"><a
+			id="DRTXT" href="html/DR.html">"</a></div>
+
+	<div class="container">
+		<div class="section">
+
+			<div id="mode-div" class="row center-align valign-wrapper">
+				<div style="margin: auto" id="mode-div" class="valign-wrapper">
+					<div style="margin: 10px;"
+						class="col s5 z-depth-1 light-blue darken-4 mode-card thermostat-card hoverable-special">
+						<input style="padding: 12px 0 10px 0;" id="mode0" type="text" maxlength="10"
+							readonly value="Thermostat 1" class="my-input mode-title" />
+						<p style="margin: 0; padding: 0;">(HSP | CSP)</p>
+						<div class="setpnt-div" style="padding-top: 8px;">
+							<input placeholder="74" id='temp1' class="red lighten-2 spl" maxlength="2" value=74
+								type="number" max="90" min="74" />
+							<input placeholder="60" id='temp2' class="blue lighten-2 spr" maxlength="2" value=60
+								type="number" max="60" min="0" />
+						</div>
+					</div>
+					<div class="col s5 z-depth-1 light-blue darken-1 mode-card thermostat-card hoverable-special">
+						<input style="padding: 12px 0 10px 0;" id="mode1" type="text" maxlength="10"
+							readonly value="Thermostat 2" class="my-input mode-title" />
+						<p style="margin: 0; padding: 0;">(HSP | CSP)</p>
+						<div class="setpnt-div" style="padding-top: 8px;">
+							<input placeholder="74" id='temp3' class="red lighten-2 spl" maxlength="2" value=74
+								type="number" max="90" min="74" />
+							<input placeholder="60" id='temp4' class="blue lighten-2 spr" maxlength="2" value=60
+								type="number" max="60" min="0" />
+						</div>
+					</div>
+
+				</div>
+
+				<div style="margin: auto" id="mode-div" class="valign-wrapper">
+					<div style="margin: 10px; background-color: #29b6f6;;"
+						class="col s5 z-depth-1  mode-card refrigerator-freezer-card hoverable-special">
+						<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10"
+							readonly value="Refrigerator" class="my-input mode-title" />
+						<p style="margin: 0; padding: 0;">(SP to SP+dT)</p>
+						<div class="setpnt-div" style="padding-top: 8px;">
+							<input placeholder="74" id='temp5' class="red lighten-2 spl  maxlength=" 2"right
+								maxlength="2" -align" value=74 type="number" max="90" min="74" />
+							<input placeholder="60" id='temp6' class="blue lighten-2 spr" value=60 type="number"
+								max="60" min="0" />
+						</div>
+					</div>
+					<div style="background-color: #b3e5fc"
+						class="col s5 z-depth-1  mode-card refrigerator-freezer-card hoverable-special">
+						<input style="padding: 12px 0 10px 0;" id="mode2" type="text" maxlength="10" readonly value="Freezer"
+							class="my-input mode-title" />
+						<p style="margin: 0; padding: 0;">(SP to SP+dT)</p>
+						<div class="setpnt-div" style="padding-top: 8px;">
+							<input placeholder="74" id='temp7' class="red lighten-2 spl  maxlength=" 2"right
+								maxlength="2" -align" value=74 type="number" max="90" min="74" />
+							<input placeholder="60" id='temp8' class="blue lighten-2 spr" value=60 type="number"
+								max="60" min="0" />
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="row valign-wrapper">
+				<div class="col s6 center-align">
+					<a id="save-therm" class="waves-effect waves-light btn">save<i
+							class="material-icons right">save</i></a>
+				</div>
+				<div class="col s6 center-align">
+					<a id="save-sp" class="waves-effect waves-light btn">save<i
+							class="material-icons right">save</i></a>
+				</div>
+			</div>
+
+
+			<div style="margin-top: 15%;" class="row valign-wrapper center-align">
+				<div class="col s10-5">
+					<h5 class="white-text">Click the area in between the nobs to schedule thermostat</h5>
+				</div>
+				<div class="col s1-5">
+					<!-- <a id="sched-btn" class="btn waves-effect waves-light scale-transition">
+						<i class="large material-icons right">edit</i>edit
+					</a> -->
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="valign-wrapper" style="padding-top: 40px;">
+					<div class="col s1 right-align"><span class="sli-day white-text">Time</span></div>
+					<div class="col s11">
+						<div class="sched-slider"></div>
+					</div>
+				</div>
+
+			</div>
+			<div class="fixed-action-btn">
+				<a id="apply-modes" class="btn-floating btn-large waves-effect waves-light scale-transition">
+					<i onClick="myFunction()" class="large material-icons">save</i>
+				</a>
+			</div>
+		</div>
+
+
+</body>
+<script type="text/javascript">
+	temperature1 = "{{temperature1}}";
+	temperature2 = "{{temperature2}}";
+	temperature3 = "{{temperature3}}";
+	temperature4 = "{{temperature4}}";
+	temperature5 = "{{temperature5}}";
+	temperature6 = "{{temperature6}}";
+	temperature7 = "{{temperature7}}";
+	temperature8 = "{{temperature8}}";
+</script>
+<script type="text/javascript" {{ url_for('static', filename='schedule-groupings.js')}}></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/jquery.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/materialize.js') }}"></script>
+
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/script.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/lib/nouislider.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/schedule/schedule-groupings.js') }}">
+</script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/schedule/schedule-epochs.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/particles.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/app.js') }}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='assets/js/navbar.js') }}"></script>
+
+</html>
