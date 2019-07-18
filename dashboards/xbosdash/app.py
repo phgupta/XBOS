@@ -1,34 +1,43 @@
-import pymortar
-import pandas as pd
-import pendulum
-import toml
 from flask import Flask
 from flask import jsonify, send_from_directory
 from flask import request
 from flask import current_app
 from flask import make_response
 from flask import render_template
-from collections import defaultdict
-from functools import update_wrapper
+from flask_pymongo import PyMongo
+
+import xsg
+import pymortar
+import pandas as pd
+import pendulum
+import toml
 import pytz
 import json
+from bson import json_util
+from collections import defaultdict
+from functools import update_wrapper
 from datetime import datetime, timedelta
 from dashutil import get_start, generate_months, prevmonday, get_today
-from datetime import timezone
-import xsg
-
-config = toml.load('config.toml')
-
-TZ = pytz.timezone('US/Pacific')
 
 app = Flask(__name__, static_url_path='/static')
 
+config = toml.load('config.toml')
+TZ = pytz.timezone('US/Pacific')
 client = pymortar.Client({
-	'mortar_address':config['Mortar']['url'], 
-	'username': config['Mortar']['username'],
-	'password': config['Mortar']['password'],
+    'mortar_address': config['Mortar']['url'],
+    'username': config['Mortar']['username'],
+    'password': config['Mortar']['password'],
 })
 sites = [config['Dashboard']['sitename']]
+
+# MongoDB configurations
+app.config['MONGO_DBNAME'] = 'modes'
+app.config["MONGO_URI"] = "mongodb://localhost:27017/modes"
+mongo = PyMongo(app)
+
+# Building name where this code is locally hosted
+BUILDING = 'avenal-movie-theatre'
+
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -71,6 +80,7 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
+
 def state_to_string(state):
     if state == 0:
         return 'off'
@@ -84,6 +94,7 @@ def state_to_string(state):
         return 'cool stage 2'
     else:
         return 'unknown'
+
 
 def dofetch(views, dataframes, start=None, end=None):
     timeparams = None
@@ -178,6 +189,8 @@ weather_df = pymortar.DataFrame(
     ],
 )
 
+
+# Home page is requesting /api/power/day/in/15m
 @app.route('/api/power/<last>/in/<bucketsize>')
 @crossdomain(origin='*')
 def power_summary(last, bucketsize):
@@ -187,37 +200,45 @@ def power_summary(last, bucketsize):
         ranges = generate_months(get_today().month - 1)
         readings = []
         times = []
-        for t0,t1 in ranges:
+        for t0, t1 in ranges:
             meter_df.window = '{0}d'.format((t0-t1).days)
-            res=dofetch([meter_view], [meter_df], t1, t0)
+            res = dofetch([meter_view], [meter_df], t1, t0)
             times.append(t1.tz_convert(TZ).timestamp()*1000)
             readings.append(res['meters'].fillna('myNullVal').values[0][0])
-        return jsonify({'readings': dict(zip(times,readings))})
+
+        # print('power_summary(): ', dict(zip(times, readings)))
+        return jsonify({'readings': dict(zip(times, readings))})
 
     # otherwise,
-    meter_df.window=bucketsize
-    print('start_date',start_date)
-    res=dofetch([meter_view], [meter_df], start_date, datetime.now(TZ))
-    res['meters'].columns=['readings']
+    meter_df.window = bucketsize
+    print('start_date',  start_date)
+    res = dofetch([meter_view], [meter_df], start_date, datetime.now(TZ))
+    # print('res: \n', res['meters'])
+    res['meters'].columns = ['readings']
+    # print('power_summary(): ', res['meters'].tz_convert(TZ).fillna('myNullVal'))
     return res['meters'].tz_convert(TZ).fillna('myNullVal').to_json()
 
+
+# Home page is requesting /api/energy/year/in/month & /api/energy/month/in/1d
 @app.route('/api/energy/<last>/in/<bucketsize>')
 @crossdomain(origin='*')
 def energy_summary(last, bucketsize):
+
     start_date = get_start(last)
     if last == 'year' and bucketsize == 'month':
         ranges = generate_months(get_today().month - 1)
         readings = []
         times = []
-        for t0,t1 in ranges:
+        for t0, t1 in ranges:
             meter_df.window = '15m'
-            res=dofetch([meter_view], [meter_df], t1, t0)
+            res = dofetch([meter_view], [meter_df], t1, t0)
             df = res['meters'].copy()
             df.columns = ['readings']
-            df /= 4. # divide by 4 to get 15min (kW) -> kWh
+            df /= 4.  # divide by 4 to get 15min (kW) -> kWh
             times.append(pd.to_datetime(t1.isoformat()))
             readings.append(df['readings'].sum())
-        df = pd.DataFrame(readings,index=times,columns=['readings'])
+        df = pd.DataFrame(readings, index=times, columns=['readings'])
+        # print('\n/api/energy/year/in/month/ df: \n', df)
         return df.fillna('myNullVal').to_json()
 
     meter_df.window = '15m'
@@ -228,17 +249,20 @@ def energy_summary(last, bucketsize):
     df['readings'] /= 4.
     return df.fillna('myNullVal').resample(bucketsize).apply(sum).to_json()
 
+
 @app.route('/api/price')
 @crossdomain(origin='*')
 def price():
     res = xsg.get_price(sites[0], get_today(), get_today()+timedelta(days=1))
     return res['price'].to_json()
 
+
 @app.route('/api/power')
 @crossdomain(origin='*')
 def current_power():
     raise(Exception("/api/power NOT IMPLEMENTED"))
     pass
+
 
 @app.route('/api/hvac')
 @crossdomain(origin='*')
@@ -260,6 +284,7 @@ def hvacstate():
         zones[zone]['timestamp'] = tempdf.index[-1].timestamp() * 1000
 
     return jsonify(zones)
+
 
 @app.route('/api/hvac/day/in/<bucketsize>')
 @crossdomain(origin='*')
@@ -287,6 +312,7 @@ def serve_historipcal_hvac(bucketsize):
                 zones[zone][k] = json.loads(pd.DataFrame(fakevals,index=fakedates)[0].to_json())
     return jsonify(zones)
 
+
 @app.route('/api/hvac/day/<bucketsize>')
 @crossdomain(origin='*')
 def get_temp_per_zone(bucketsize):
@@ -301,15 +327,18 @@ def get_temp_per_zone(bucketsize):
         zones[zone] = json.loads(df[temp].fillna('myNullVal').to_json())
     return jsonify(zones)
 
+
 @app.route('/api/prediction/hvac/day/in/<bucketsize>')
 @crossdomain(origin='*')
 def serve_prediction_hvac(bucketsize):
     pass
 
+
 @app.route('/api/prediction/dr')
 @crossdomain(origin='*')
 def serve_prediction_dr():
     return jsonify({'days': [{'date': 1558126800, 'likelihood': 'likely'}]})
+
 
 def format_simulation_output(output):
     # actions -> number to label
@@ -321,6 +350,7 @@ def format_simulation_output(output):
         data['heating'] = {t: 30 for t in data['inside'].keys()}
         output[zone] = data
     return output
+
 
 @app.route('/api/simulation/<drlambda>/<date>')
 def simulate_lambda_site(drlambda, date):
@@ -334,6 +364,11 @@ def simulate_lambda_site(drlambda, date):
         end = datetime.strptime(end.strftime(fmt), fmt)
 
         try:
+            # print('sites[0]: ', sites[0])
+            # print('start: ', start)
+            # print('end: ', end)
+            # print('float(drlambda): ', float(drlambda))
+            # print('zone: ', zone)
             res = xsg.simulation(sites[0], start, end, '1h', float(drlambda), zone=zone)
             # dataframe to dict
             formatted = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
@@ -344,6 +379,7 @@ def simulate_lambda_site(drlambda, date):
             return jsonify({'error': 'could not get prediction', 'msg': str(e)})
     print(ret)
     return jsonify(format_simulation_output(ret))
+
 
 @app.route('/api/simulation/<drlambda>/<date>/<zone>')
 @crossdomain(origin='*')
@@ -367,7 +403,8 @@ def simulate_lambda(drlambda, date, zone):
         d = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
         return jsonify(format_simulation_output(d))
     except Exception as e:
-        return jsonify({'error': 'could not get prediction', 'msg': str(e)})
+       return jsonify({'error': 'could not get prediction', 'msg': str(e)})
+
 
 @app.route('/api/occupancy/<last>/in/<bucketsize>')
 @crossdomain(origin='*')
@@ -379,6 +416,7 @@ def serve_occupancy(last, bucketsize):
 #def setpoint_today():
 #    pass
 
+
 @app.route('/<filename>')
 @crossdomain(origin='*')
 def home(filename):
@@ -386,5 +424,77 @@ def home(filename):
     #return render_template('index.html')
 
 
+@app.route('/')
+@crossdomain(origin='*')
+def index():
+    return render_template('index.html')
+
+
+@app.route('/api/save_mode', methods=['POST'])
+@crossdomain(origin="*")
+def save_mode():
+    """ This function saves the settings & times for a particular group in "Schedule" tab.
+
+    TODO: Add zone names in JS as well!
+
+    """
+
+    data = request.data                 # class <'bytes'>
+    str_data = data.decode('utf-8')     # str
+    json_data = json.loads(str_data)    # dict
+
+    print(json_data)
+
+    # Get mongodb document
+    modes_collection = mongo.db.modes
+
+    # result is of type bson (binary json)
+    result = modes_collection.insert_one(json_data)
+
+    print('after insert: ', json_data)
+
+    if not result:
+        return jsonify({'error': 'could not push data to database'})
+    else:
+        return jsonify({'success': str_data})
+
+
+@app.route('/api/get_mode')
+@crossdomain(origin="*")
+def get_mode():
+    """ This function retrieves the settings & times for a particular group in "Schedule" tab. """
+
+    # # result is a cursor object
+    # # requests.args.get() is the best way to get data from url
+    # result = mongo.db.modes.find({
+    #     '$and': [
+    #         {'group_name': request.args.get('group_name')},
+    #         {'mode': request.args.get('mode')}
+    #     ]
+    # })
+
+    # Get dump of all documents stored in mongodb
+    result = mongo.db.modes.find({})
+
+    if result:
+        bson_result = ""
+        json_result = []
+        for i, doc in enumerate(result):
+            bson_result = json_util.dumps(doc)
+            json_result.append(json.loads(bson_result))
+        # return json.dumps(json_result)
+        return jsonify({'success': json_result})
+    else:
+        return jsonify({'error': 'could not retrieve data from mongodb'})
+
+
+@app.route('/api/get_zones')
+@crossdomain(origin="*")
+def get_zones():
+    """ This function retrieves all the zone names of a building """
+    return xsg.get_zones(BUILDING)
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True)
+    app.run(host='0.0.0.0', debug=True)
+    # app.run(host='127.0.0.1:5000', debug=True)

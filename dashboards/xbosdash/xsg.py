@@ -62,6 +62,7 @@ def simulation(building, start, end, horizon, lambda_val, zone=None):
         starting_temperatures = {zone: 66. for zone in all_zones}
         # 15 minutes here is the simulated step
         res = xsg.get_mpc_simulation(optimizer_stub, building, [zonename], start, end, '15m', horizon, lambda_val, starting_temperatures)
+        print('xsg.get_mpc_simulation: ', res)
         dates = pd.date_range(start, end, freq='15T')
         actions, temperatures = res
         # we pad the actions with an 'off'

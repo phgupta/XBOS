@@ -6,3 +6,7 @@ toml
 flask
 pytz
 xbos_services_getter
+IPython
+googleapis-common-protos
+pyarrow
+Flask-PyMongo

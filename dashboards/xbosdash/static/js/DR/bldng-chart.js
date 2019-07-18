@@ -60,7 +60,7 @@ $(document).ready(function() {
 	function processPower(j) {
 		var toRet = [];
 		for (var z in j) {
-			console.log(z);
+			// console.log(z);
 		}
 	}
 

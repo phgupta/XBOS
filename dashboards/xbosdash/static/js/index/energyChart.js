@@ -156,6 +156,9 @@ $(document).ready(function() {
 						"type": "GET",
 						"dataType": "json",
 						"success": function(d) {
+
+						    console.log("load: http://127.0.0.1:5000/api/", getPVE(), apis[lev])
+						    console.log('d: ', d)
 							energyChart.addSeries(processDD(d, "2019", true));
 							energyChart.series[0].data[energyChart.series[0].data.length - 1].doDrilldown();
 						}
@@ -170,6 +173,7 @@ $(document).ready(function() {
 							"type": "GET",
 							"dataType": "json",
 							"success": function(data) {
+							    console.log("drilldown: http://127.0.0.1:5000/api/", getPVE(), apis[lev])
 								var dd = processDD(data, e.point.id);
 								energyChart.userOptions.drilldown.series.push(dd);
 								lev -= 1;

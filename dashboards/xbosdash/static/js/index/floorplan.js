@@ -22,7 +22,7 @@ $(document).ready(function() {
 			$("#hvac-loader").hide();
 			$("#hvac").show();
 			var ret = processResp(d);
-			console.log(setpts);
+			console.log('/api/hvac : ', setpts);
 			var bools = [];
 			ret.forEach(function(v) {
 				if (!v.length) {

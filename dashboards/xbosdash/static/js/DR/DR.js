@@ -210,6 +210,11 @@ $(document).ready(function() {
 		return 0;
 	}
 
+	function getTodayDate() {
+	    // Return today's date in ISO format. e.g. '2019-07-18T00:37:05Z'
+        return new Date().toISOString().substr(0, 19) + 'Z'
+	}
+
 	$(".simrange").each(function() {
 		var x = $("#" + this.id.replace("range", "simlam"));
 		this.oninput = function() {
@@ -221,6 +226,7 @@ $(document).ready(function() {
 		};
 	});
 
+    // This is the function when "Run" button is clicked in the DR page.
 	$("#bldng-btn").click(function() {
 		$("#bldng-config").hide();
 		$("#sim-loader").show();
@@ -235,10 +241,12 @@ $(document).ready(function() {
 		toRet.lam = parseFloat($("#sim-lam-range").prop("value"));
 		//setTimeout(function() { simSuccess(bldngChart, "bldng"); }, 3000);
 		// bldngChart.setTitle({ text: "Simulated vs Baseline" }, { text: "Simulated streams are dotted" });
-		console.log("simulation input?", toRet);
+		// console.log("simulation input?", toRet);
+
         // TODO: start from NOW, go until midnight tonight
         $.ajax({
-            "url": "http://127.0.0.1:5000/api/simulation/0.5/2019-07-01T12:00:00Z",
+            // "url": "http://127.0.0.1:5000/api/simulation/0.5/2019-07-01T12:00:00Z",
+            "url": "http://0.0.0.0:5000/api/simulation/" + toRet.lam.toString() + "/" + getTodayDate(),
             "success": function(d) {
                 console.log("simulation", d);
                 var a = processResp(d);
@@ -249,7 +257,8 @@ $(document).ready(function() {
                 bldngChart.redraw();
             },
             "error": function(d) {
-                console.error(d)
+                console.log("url: ", "http://127.0.0.1:5000/api/simulation/" + toRet.lam.toString() + "/" + getTodayDate())
+                console.error("simulation error: ", d)
             }
         })
 		return toRet;

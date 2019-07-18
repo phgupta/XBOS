@@ -137,7 +137,10 @@ $(document).ready(function() {
 		$("#location").append(location);
 	} readIn();
 
+    // Get all inputs from user in schedule-epochs page and store it in database.
+    // TODO: How to get the Group Name of zone?
 	function readOut() {
+
 		var obj = new Object();
 		// obj.name = location;
 		// obj.zones = [1, 3, 5, 7];
@@ -152,6 +155,7 @@ $(document).ready(function() {
 		// 	m.enabled = $(inputs[3]).prop("checked");
 		// 	obj.modes.push(m);
 		// });
+
 		var t = new Object();
 		t.sun = $.extend([], sliders[0].noUiSlider.get());
 		t.mon = $.extend([], sliders[1].noUiSlider.get());
@@ -162,8 +166,8 @@ $(document).ready(function() {
 		t.sat = $.extend([], sliders[6].noUiSlider.get());
 		t.dr = $.extend([], sliders[7].noUiSlider.get());
 		t.hol = $.extend([], sliders[8].noUiSlider.get());
-
 		obj.times = t;
+
 		var sets = new Object();
 		sets.sun = sliderModes[0];
 		sets.mon = sliderModes[1];
@@ -175,9 +179,38 @@ $(document).ready(function() {
 		sets.dr = sliderModes[7];
 		sets.hol = sliderModes[8];
 		obj.settings = sets;
-		console.log(obj);
+
+        // Create data object to be saved to database
+        var data = new Object();
+        data.times = t;
+        data.settings = sets;
+        data.group_name = 'Area 51'
+
+        console.log('data: ', data)
+        console.log('JSON.stringify(data): ', JSON.stringify(data))
+
+		// console.log('epoch settings: ', obj);
+		// console.log('Group Name', $("#groupName").value)
+		// console.log('passAlong: ', passAlong)
+
+        // Save epochs and group name to database
+		$.ajax({
+            "url": "http://0.0.0.0:5000/api/save_mode",
+            "type": "post",
+            "dataType": "json",
+            "headers": {"Content-Type": "application/json"},
+            "data": JSON.stringify(data),
+            "success": function(d) {
+                console.log("success: ", d);
+            },
+            "error": function(d) {
+                console.error("error: ", d)
+            }
+        })
+
 	}
 
+    // This is the save icon button on the bottom right corner of schedule-epochs page
 	$("#apply-modes").click(function() {
 		M.toast({html: 'Preferences saved and modes applied.', classes:"rounded", displayLength: 5000});
 		readOut();

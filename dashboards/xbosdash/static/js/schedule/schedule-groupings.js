@@ -21,6 +21,18 @@ $(document).ready(function() {
 			zoneArr.push(t);
 		}
 		setGB();
+
+		// CHECK: TEMP!! Making sure that /api/get_mode works.
+		$.ajax({
+            "url": "http://0.0.0.0:5000/api/get_mode",
+            "success": function(d) {
+                console.log("/api/get_mode success: ", d);
+            },
+            "error": function(d) {
+                console.error("error: ", d)
+            }
+        })
+
 	});
 
 	function setGB() { $("#group-btn").html("Group Selected (" + zoneSel + ")"); }
@@ -45,6 +57,7 @@ $(document).ready(function() {
 		location.href = "schedule-epochs.html";
 	});
 
+    // This is the save button on the schedule page to the right of "Current Modes"
 	$("#save-modes").click(function() {
 		var obj = new Object();
 		obj.modes = [];
