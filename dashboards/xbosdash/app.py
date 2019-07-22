@@ -488,6 +488,29 @@ def get_mode():
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
 
+@app.route('/api/delete_mode')
+@crossdomain(origin="*")
+def delete_mode():
+    """ Delete group from mongodb. """
+
+    all_docs = mongo.db.modes.find({'group_name': request.args.get('group_name')}).limit(1)
+
+    bson_result = ""
+    json_result = []
+    for i, doc in enumerate(all_docs):
+        bson_result = json_util.dumps(doc)
+        json_result.append(json.loads(bson_result))
+
+    if json_result:
+        try:
+            mongo.db.modes.delete_one({'group_name': request.args.get('group_name')})
+            return jsonify({'success': json_result})
+        except Exception as e:
+            return jsonify({'error': str(e)})
+    else:
+        return jsonify({'error': 'group name doesn\'t exist in db'})
+
+
 @app.route('/api/get_zones')
 @crossdomain(origin="*")
 def get_zones():
@@ -497,4 +520,3 @@ def get_zones():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
-    # app.run(host='127.0.0.1:5000', debug=True)
