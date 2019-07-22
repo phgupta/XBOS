@@ -443,20 +443,26 @@ def save_mode():
     str_data = data.decode('utf-8')     # str
     json_data = json.loads(str_data)    # dict
 
-    print(json_data)
+    # Check if group name already exists in db
+    group_name = json_data['group_name']
+    res = mongo.db.modes.find({'group_name': group_name}).limit(1)
 
-    # Get mongodb document
-    modes_collection = mongo.db.modes
+    bson_result = ""
+    json_result = []
+    for i, doc in enumerate(res):
+        bson_result = json_util.dumps(doc)
+        json_result.append(json.loads(bson_result))
 
-    # result is of type bson (binary json)
-    result = modes_collection.insert_one(json_data)
-
-    print('after insert: ', json_data)
-
-    if not result:
-        return jsonify({'error': 'could not push data to database'})
+    if json_result:
+        return jsonify({'error': 'Group name exists in db. Choose another name!'})
     else:
-        return jsonify({'success': str_data})
+        print('/api/save_mode: ', json_data)
+        try:
+            # result is of type bson (binary json)
+            mongo.db.modes.insert_one(json_data)
+            return jsonify({'success': str_data})
+        except Exception as e:
+            return jsonify({'error': str(e)})
 
 
 @app.route('/api/get_mode')
