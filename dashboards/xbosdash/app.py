@@ -430,65 +430,97 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api/save_mode', methods=['POST'])
+@app.route('/api/save_modes', methods=['POST'])
 @crossdomain(origin="*")
-def save_mode():
-    """ This function saves the settings & times for a particular group in "Schedule" tab.
+def save_modes():
+    """ Saves the modes (closed, open...) in schedule-groups.js page. """
 
-    TODO: Add zone names in JS as well!
-
-    """
-
+    # Convert bytes to dict
     data = request.data                 # class <'bytes'>
     str_data = data.decode('utf-8')     # str
     json_data = json.loads(str_data)    # dict
+    json_data['type'] = 'modes'         # Differentiates modes from groups
 
-    # Check if group name already exists in db
-    group_name = json_data['group_name']
-    res = mongo.db.modes.find({'group_name': group_name}).limit(1)
-
-    bson_result = ""
-    json_result = []
-    for i, doc in enumerate(res):
-        bson_result = json_util.dumps(doc)
-        json_result.append(json.loads(bson_result))
-
-    if json_result:
-        return jsonify({'error': 'Group name exists in db. Choose another name!'})
-    else:
-        print('/api/save_mode: ', json_data)
-        try:
-            # result is of type bson (binary json)
-            mongo.db.modes.insert_one(json_data)
-            return jsonify({'success': str_data})
-        except Exception as e:
-            return jsonify({'error': str(e)})
+    try:
+        # result is of type bson (binary json)
+        mongo.db.modes.insert_one(json_data)
+        return jsonify({'success': str_data})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
-@app.route('/api/get_mode')
+@app.route('/api/get_modes')
 @crossdomain(origin="*")
-def get_mode():
+def get_modes():
     """ This function retrieves the settings & times for a particular group in "Schedule" tab. """
 
-    # # result is a cursor object
-    # # requests.args.get() is the best way to get data from url
-    # result = mongo.db.modes.find({
-    #     '$and': [
-    #         {'group_name': request.args.get('group_name')},
-    #         {'mode': request.args.get('mode')}
-    #     ]
-    # })
+    # Get the record which stores all the modes i.e. type=modes
+    result = mongo.db.modes.find({'type': 'modes'})
 
-    # Get dump of all documents stored in mongodb
-    result = mongo.db.modes.find({})
-
+    # CHECK: result will always return a cursor object?
     if result:
         bson_result = ""
         json_result = []
         for i, doc in enumerate(result):
             bson_result = json_util.dumps(doc)
             json_result.append(json.loads(bson_result))
-        # return json.dumps(json_result)
+        return jsonify({'success': json_result})
+    else:
+        return jsonify({'error': 'could not retrieve data from mongodb'})
+
+
+@app.route('/api/create_grouping')
+@crossdomain(origin="*")
+def create_grouping():
+    """ Create new group. """
+    # Convert bytes to dict
+    data = request.data                 # class <'bytes'>
+    str_data = data.decode('utf-8')     # str
+    json_data = json.loads(str_data)    # dict
+    json_data['type'] = 'groups'        # Differentiates groups from modes
+
+    try:
+        # result is of type bson (binary json)
+        mongo.db.modes.insert_one(json_data)
+        return jsonify({'success': str_data})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
+@app.route('/api/update_grouping')
+@crossdomain(origin="*")
+def update_grouping():
+    """ Update a group's name, settings, times... """
+
+    # Convert bytes to dict
+    data = request.data                 # class <'bytes'>
+    str_data = data.decode('utf-8')     # str
+    json_data = json.loads(str_data)    # dict
+    json_data['type'] = 'groups'        # Differentiates modes from groups
+
+    try:
+        # result is of type bson (binary json)
+        mongo.db.modes.update({'type': 'groups'}, json_data)
+        return jsonify({'success': str_data})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
+@app.route('/api/get_groupings')
+@crossdomain(origin="*")
+def get_groupings():
+    """ Retrieve all groups for the building. """
+
+    # Get all groups of building
+    result = mongo.db.modes.find({'type': 'groups'})
+
+    # CHECK: result will always return a cursor object?
+    if result:
+        bson_result = ""
+        json_result = []
+        for i, doc in enumerate(result):
+            bson_result = json_util.dumps(doc)
+            json_result.append(json.loads(bson_result))
         return jsonify({'success': json_result})
     else:
         return jsonify({'error': 'could not retrieve data from mongodb'})
