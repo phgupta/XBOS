@@ -152,7 +152,7 @@ $(document).ready(function() {
 			"events": {
 				"load": function(e) {
 					$.ajax({
-						"url": "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
+						"url": "http://0.0.0.0:5000/api/" + getPVE() + apis[lev],
 						"type": "GET",
 						"dataType": "json",
 						"success": function(d) {
@@ -169,7 +169,7 @@ $(document).ready(function() {
 					if (!e.seriesOptions) {
 						energyChart.showLoading();
 						$.ajax({
-							"url": "http://127.0.0.1:5000/api/" + getPVE() + apis[lev],
+							"url": "http://0.0.0.0:5000/api/" + getPVE() + apis[lev],
 							"type": "GET",
 							"dataType": "json",
 							"success": function(data) {

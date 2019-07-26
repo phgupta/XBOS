@@ -24,7 +24,7 @@ $(document).ready(function() {
             s[i] = s[i].charAt(0).toUpperCase() + s[i].slice(1).toLowerCase();
         }
         s = s.join("");
-        s = s.replace("Zone", "").replace("ZONE", "").replace("zone", "");
+        s = s.replace("ZONE", "").replace("Zone", "").replace("zone", "");
         s = s.replace("HVAC", "").replace("Hvac", "").replace("hvac", "");
         return s;
     }
@@ -169,7 +169,6 @@ $(document).ready(function() {
     function makeData(j, z, sums, first, pa) {
         var toRet = [];
         var i = 0;
-        console.log('j',j)
         for (var k in j) {
             var toAdd = new Object();
             toAdd.name = getTime(k/1000, 5);
@@ -250,7 +249,7 @@ $(document).ready(function() {
             "events": {
                 "load": function(e) {
                     $.ajax({
-                        "url": "http://127.0.0.1:5000/api/hvac/day/30m",
+                        "url": "http://0.0.0.0:5000/api/hvac/day/30m",
                         "type": "GET",
                         "dataType": "json",
                         "success": function(d) {

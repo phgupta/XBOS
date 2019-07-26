@@ -1,20 +1,7 @@
 $(document).ready(function() {
+	$(window).bind('beforeunload', function() { return ""; });
 	M.AutoInit();
-	var passAlong = sessionStorage.getItem("groupname");
-	if (!passAlong) {
-		$("#groupName").prop("value", "Untitled");
-	}
-	// sessionStorage.setItem("modesToGroup", passAlong);
-	// var cname = $("#groupName").prop("value");
-	// if (passAlong) {
-	// 	console.log(passAlong);
-	// 	console.log(cname);
-	// 	if (cname != passAlong) {
-	// 		$("#groupName").prop("value", passAlong);
-	// 		sessionStorage.setItem("modesToGroup", "");
-	// 	}
-	// }
-	// let c = ["pink", "deep-orange", "green", "teal", "blue", "deep-purple", "tp-blue"];
+
 	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
 	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
 
@@ -46,6 +33,7 @@ $(document).ready(function() {
 						[null, null, null],[null, null, null],
 						[null, null, null],[null, null, null],
 						[null, null, null]];
+	var dayToIndex = {"sun": 0, "mon": 1, "tue": 2, "wed": 3, "thu": 4, "fri": 5, "sat": 6, "dr": 7, "hol": 8};
 
 	$(".sched-slider").each(function(i) {
 		var master = getMaster();
@@ -98,7 +86,7 @@ $(document).ready(function() {
 		});
 	}
 
-	var colors = ["#018AE0", "#FDB515", "#cab2d6", "#fccde5", "#b2df8a"];
+	var colors = ["#018ae0", "#fdb515", "#b39ddb", "#fccde5", "#b2df8a", "#ff8a65"];
 	var curMode = 0;
 	var curColor = colors[0];
 	$(".with-gap").each(function(i) {
@@ -131,91 +119,6 @@ $(document).ready(function() {
 		});
 	} getConnect();
 
-	var location;
-	function readIn() {
-		// location = "Basketball Courts";
-		$("#location").append(location);
-	} readIn();
-
-    // Get all inputs from user in schedule-epochs page and store it in database.
-    // TODO: How to get the Group Name of zone?
-	function readOut() {
-
-		var obj = new Object();
-		// obj.name = location;
-		// obj.zones = [1, 3, 5, 7];
-		// obj.modes = [];
-		// $(".mode-card").each(function(i) {
-		// 	var m = new Object();
-		// 	m.id = i;
-		// 	var inputs = $(this).find("input");
-		// 	m.name = inputs[0].value;
-		// 	m.heating = inputs[1].value;
-		// 	m.cooling = inputs[2].value;
-		// 	m.enabled = $(inputs[3]).prop("checked");
-		// 	obj.modes.push(m);
-		// });
-
-		var t = new Object();
-		t.sun = $.extend([], sliders[0].noUiSlider.get());
-		t.mon = $.extend([], sliders[1].noUiSlider.get());
-		t.tue = $.extend([], sliders[2].noUiSlider.get());
-		t.wed = $.extend([], sliders[3].noUiSlider.get());
-		t.thu = $.extend([], sliders[4].noUiSlider.get());
-		t.fri = $.extend([], sliders[5].noUiSlider.get());
-		t.sat = $.extend([], sliders[6].noUiSlider.get());
-		t.dr = $.extend([], sliders[7].noUiSlider.get());
-		t.hol = $.extend([], sliders[8].noUiSlider.get());
-		obj.times = t;
-
-		var sets = new Object();
-		sets.sun = sliderModes[0];
-		sets.mon = sliderModes[1];
-		sets.tue = sliderModes[2];
-		sets.wed = sliderModes[3];
-		sets.thu = sliderModes[4];
-		sets.fri = sliderModes[5];
-		sets.sat = sliderModes[6];
-		sets.dr = sliderModes[7];
-		sets.hol = sliderModes[8];
-		obj.settings = sets;
-
-        // Create data object to be saved to database
-        var data = new Object();
-        data.times = t;
-        data.settings = sets;
-        data.group_name = 'Area 51'
-
-        console.log('data: ', data)
-        console.log('JSON.stringify(data): ', JSON.stringify(data))
-
-		// console.log('epoch settings: ', obj);
-		// console.log('Group Name', $("#groupName").value)
-		// console.log('passAlong: ', passAlong)
-
-        // Save epochs and group name to database
-		$.ajax({
-            "url": "http://0.0.0.0:5000/api/save_mode",
-            "type": "post",
-            "dataType": "json",
-            "headers": {"Content-Type": "application/json"},
-            "data": JSON.stringify(data),
-            "success": function(d) {
-                console.log("success: ", d);
-            },
-            "error": function(d) {
-                console.error("error: ", d)
-            }
-        })
-
-	}
-
-    // This is the save icon button on the bottom right corner of schedule-epochs page
-	$("#apply-modes").click(function() {
-		M.toast({html: 'Preferences saved and modes applied.', classes:"rounded", displayLength: 5000});
-		readOut();
-	});
-
 	function setColors() {
 		$(".noUi-connect").each(function(i) {
 			var row = 0; var sum = 0;
@@ -237,12 +140,7 @@ $(document).ready(function() {
 				var l = s.noUiSlider.get();
 				if (!$.isArray(l)) { l = [l]; }
 				else if (l.length == 5) {
-					var toastElement = document.querySelector('.toast');
-					if (toastElement) {
-  						var toastInstance = M.Toast.getInstance(toastElement);
-						toastInstance.dismiss();
-					}
-					M.toast({html: "You cannot have more than 6 epochs", classes: "rounded", displayLength: 2500});
+					safeToast("You cannot have more than 6 epochs", "rounded red", 2500);
 					return;
 				}
 				l = l.map(function(x) { return parseFloat(x); });
@@ -350,4 +248,116 @@ $(document).ready(function() {
 	} $("#mode-edit").click(editModes);
 
 	function getEdit() { if (mode) { return "save"; } else { return "edit"; }}
+
+	function readIn(obj) {
+		$("#groupName").prop("value", obj.group);
+		$.each(obj["times"], function(i, v) {
+			var ind = dayToIndex[i];
+			var s = sliders[ind];
+			var master = getMaster();
+			if (ind == 0 || ind == 8) { master.pips = pips; }
+			master.start = $.map(v, function(val) { return parseFloat(val); });
+			counts[ind] = v.length + 1;
+			var ts; (ts = []).length = counts[ind]; ts.fill(true);
+			master.connect = ts;
+			s.noUiSlider.destroy();
+			noUiSlider.create(s, master);
+		});
+		setTop();
+		$.each(obj["settings"], function(i, v) {
+			sliderColors[dayToIndex[i]] = $.map(v, function(val) { return colors[val]; });
+			sliderModes[dayToIndex[i]] = v;
+		});
+	}
+
+	var cgn = localStorage.getItem("curr-group-name");
+	if (cgn != null) { readIn(JSON.parse(localStorage.getItem(cgn + "-group"))); }
+	else { $("#groupName").prop("value", JSON.parse(localStorage.getItem("zones-for-group")).join(", ")); }
+
+	function smartReadOut(name) {
+		var obj = new Object();
+		
+		obj.group = name;
+		
+		var t = new Object();
+		t.sun = $.extend([], sliders[0].noUiSlider.get());
+		t.mon = $.extend([], sliders[1].noUiSlider.get());
+		t.tue = $.extend([], sliders[2].noUiSlider.get());
+		t.wed = $.extend([], sliders[3].noUiSlider.get());
+		t.thu = $.extend([], sliders[4].noUiSlider.get());
+		t.fri = $.extend([], sliders[5].noUiSlider.get());
+		t.sat = $.extend([], sliders[6].noUiSlider.get());
+		t.dr = $.extend([], sliders[7].noUiSlider.get());
+		t.hol = $.extend([], sliders[8].noUiSlider.get());
+		obj.times = t;
+		
+		var sets = new Object();
+		sets.sun = sliderModes[0];
+		sets.mon = sliderModes[1];
+		sets.tue = sliderModes[2];
+		sets.wed = sliderModes[3];
+		sets.thu = sliderModes[4];
+		sets.fri = sliderModes[5];
+		sets.sat = sliderModes[6];
+		sets.dr = sliderModes[7];
+		sets.hol = sliderModes[8];
+		obj.settings = sets;
+		
+		var cgn = localStorage.getItem("curr-group-name");
+		if (cgn == null) {
+			obj.zones = JSON.parse(localStorage.getItem("zones-for-group"));
+		} else {
+			obj.zones = JSON.parse(localStorage.getItem(cgn + "-group")).zones;
+			if (name != cgn) {
+				localStorage.removeItem(cgn + "-group");
+				localStorage.setItem("curr-group-name", name);
+				obj.original_group_name = cgn;
+			}
+		}
+		localStorage.setItem(name + "-group", JSON.stringify(obj));
+		// TODO: call create_grouping when cgn is null and add new grouping to allGroupings
+		$.ajax({
+			"url": "http://0.0.0.0:5000/update_grouping",
+			"type": "GET",
+			"dataType": "json",
+			"success": function(d) {
+				console.log("hi");
+			},
+			"error": function(d) {
+				console.log(obj);
+			}
+		});
+	}
+
+	function updateModes() {
+		var modeObj = JSON.parse(localStorage.getItem("mode-settings"));
+		if (modeObj == null) {
+			console.log("error!");
+		}
+		var modeDiv = $("#mode-div");
+		var count = 0;
+		for (var i in modeObj) {
+			var curr = modeObj[i];
+			modeDiv.append("<div style='background-color: " + colors[count] + ";' class='col s2 emode mode-card'><h4 id='mode" + count + "' class='mte'>" + curr["name"] + "</h4><div class='setpnt-div'><div class='red lighten-2 spl etab'>" + curr["heating"] + "</div><div class='blue lighten-2 spr etab'>" + curr["cooling"] + "</div></div></div>");
+			if (count != 5) { modeDiv.append("<div class='col sml'></div>"); }
+			count += 1;
+		}
+	} updateModes();
+
+	function safeToast(s, c, t=5000) {
+		var toastElement = document.querySelector('.toast');
+		if (!toastElement) { M.toast({html: s, classes: c, displayLength: t}); }
+	}
+
+	$("#apply-modes").click(function() {
+		var gn = $("#groupName").prop("value").trim();
+		if (gn.length < 3) {
+			safeToast("Group Name must be at least 3 characters.", "rounded red");	
+		} else if (gn.length > 20) {
+			safeToast("Group Name must be 20 characters or fewer.", "rounded red");
+		} else {
+			safeToast("Preferences saved and modes applied.", "rounded");
+			readOut(gn);
+		}
+	});
 });

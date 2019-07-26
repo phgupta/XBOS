@@ -6,6 +6,7 @@
 
 .cb-col {
   padding-bottom: 15px !important;
+  width: 20%;
 }
 
 .mode-title {
@@ -74,7 +75,8 @@
 }
 
 .forecast-card {
-  width: 18.5%;
+  width: 18%;
+  margin: 0 1%;
 }
 
 .zone-card {
@@ -4608,6 +4610,7 @@ nav .brand-logo {
   display: inline-block;
   font-size: 2.1rem;
   padding: 0;
+  padding-left: 15px;
 }
 
 nav .brand-logo.center {
@@ -6035,7 +6038,9 @@ button.btn-floating {
   right: 0;
   background-color: #fafafa;
   padding: 0;
-  max-height: 70%;
+  /* mine */
+  max-height: 55%;
+  /*max-height: 70%;*/
   width: 55%;
   margin: auto;
   overflow-y: auto;
@@ -6055,6 +6060,10 @@ button.btn-floating {
 
 .modal .modal-content {
   padding: 24px;
+  /* mine */
+  font-size: 20px;
+  /* mine */
+  line-height: 1.5;
 }
 
 .modal .modal-close {
