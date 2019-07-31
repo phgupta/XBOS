@@ -191,7 +191,7 @@ $(document).ready(function() {
 				var s = sliders[row];
 				var l = s.noUiSlider.get();
 				if (!$.isArray(l)) { return; }
-				console.log(row, col);
+				// console.log(row, col);
 				// https://davidwalsh.name/remove-item-array-javascript
 				l.splice(col, 1);
 				if (sliderColors[row][col] == sliderColors[row][col+1]) {
@@ -268,6 +268,20 @@ $(document).ready(function() {
 			sliderColors[dayToIndex[i]] = $.map(v, function(val) { return colors[val]; });
 			sliderModes[dayToIndex[i]] = v;
 		});
+		setColors();
+		setConnects();
+		setHandles();
+		setTop();
+		getConnect();
+	}
+
+	function findGroup(name) {
+		var groupings = JSON.parse(localStorage.getItem("all-groupings"));
+		for (var i in groupings) {
+			if (groupings[i]["group"] == name) {
+				return i;
+			}
+		}
 	}
 
 	var cgn = localStorage.getItem("curr-group-name");
@@ -275,6 +289,8 @@ $(document).ready(function() {
 	else { $("#groupName").prop("value", JSON.parse(localStorage.getItem("zones-for-group")).join(", ")); }
 
 	function smartReadOut(name) {
+		if (nameUsed(name)) { safeToast("Group name must be unique.", "rounded red"); return; }
+		
 		var obj = new Object();
 		
 		obj.group = name;
@@ -287,7 +303,7 @@ $(document).ready(function() {
 		t.thu = $.extend([], sliders[4].noUiSlider.get());
 		t.fri = $.extend([], sliders[5].noUiSlider.get());
 		t.sat = $.extend([], sliders[6].noUiSlider.get());
-		t.dr = $.extend([], sliders[7].noUiSlider.get());
+		t.dr  = $.extend([], sliders[7].noUiSlider.get());
 		t.hol = $.extend([], sliders[8].noUiSlider.get());
 		obj.times = t;
 		
@@ -299,41 +315,61 @@ $(document).ready(function() {
 		sets.thu = sliderModes[4];
 		sets.fri = sliderModes[5];
 		sets.sat = sliderModes[6];
-		sets.dr = sliderModes[7];
+		sets.dr  = sliderModes[7];
 		sets.hol = sliderModes[8];
 		obj.settings = sets;
 		
+		var groupings = JSON.parse(localStorage.getItem("all-groupings"));
+		var zfg = JSON.parse(localStorage.getItem("zones-for-group"));
 		var cgn = localStorage.getItem("curr-group-name");
-		if (cgn == null) {
-			obj.zones = JSON.parse(localStorage.getItem("zones-for-group"));
+		if (zfg != null) {
+			obj.zones = zfg;
+			localStorage.removeItem("zones-for-group");
+			groupings.push(obj);
+			localStorage.setItem("all-groupings", JSON.stringify(groupings));
+			$.ajax({
+				"url": "http://0.0.0.0:5000/api/create_grouping",
+				"type": "POST",
+				"dataType": "json",
+				"contentType": 'application/json',
+				"data": JSON.stringify(obj),
+				"success": function(d) {
+					console.log('/api/create_grouping success: ', d);
+				},
+				"error": function(d) {
+					console.log('/api/create_grouping error: ', d);
+				}
+			});
 		} else {
-			obj.zones = JSON.parse(localStorage.getItem(cgn + "-group")).zones;
-			if (name != cgn) {
-				localStorage.removeItem(cgn + "-group");
-				localStorage.setItem("curr-group-name", name);
-				obj.original_group_name = cgn;
-			}
+			obj.zones = JSON.parse(localStorage.getItem(cgn + "-group"))["zones"];
+			obj.original_group_name = cgn;
+			var ind = findGroup(cgn);
+			// if (ind == null) { safeToast("Something went wrong.", "rounded red"); }
+			groupings[ind] = obj;
+			localStorage.setItem("all-groupings", JSON.stringify(groupings));
+			if (name != cgn) { localStorage.removeItem(cgn + "-group"); }
+			$.ajax({
+				"url": "http://0.0.0.0:5000/api/update_grouping",
+				"type": "POST",
+				"dataType": "json",
+				"contentType": 'application/json',
+				"data": JSON.stringify(obj),
+				"success": function(d) {
+					console.log('/api/update_grouping success: ', d);
+				},
+				"error": function(d) {
+					console.log('/api/update_grouping error: ', obj);
+				}
+			});
 		}
+		localStorage.setItem("curr-group-name", name);
 		localStorage.setItem(name + "-group", JSON.stringify(obj));
-		// TODO: call create_grouping when cgn is null and add new grouping to allGroupings
-		$.ajax({
-			"url": "http://0.0.0.0:5000/update_grouping",
-			"type": "GET",
-			"dataType": "json",
-			"success": function(d) {
-				console.log("hi");
-			},
-			"error": function(d) {
-				console.log(obj);
-			}
-		});
+		safeToast("Changes successfully updated.", "rounded");
 	}
 
 	function updateModes() {
 		var modeObj = JSON.parse(localStorage.getItem("mode-settings"));
-		if (modeObj == null) {
-			console.log("error!");
-		}
+		if (modeObj == null) { window.location.href = "schedule-groupings.html"; }
 		var modeDiv = $("#mode-div");
 		var count = 0;
 		for (var i in modeObj) {
@@ -349,6 +385,17 @@ $(document).ready(function() {
 		if (!toastElement) { M.toast({html: s, classes: c, displayLength: t}); }
 	}
 
+	function nameUsed(gn) {
+		var groupings = JSON.parse(localStorage.getItem("all-groupings"));
+		var cgn = localStorage.getItem("curr-group-name");
+		for (var i in groupings) {
+			if (groupings[i]["group"] == gn && groupings[i]["group"] != cgn) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	$("#apply-modes").click(function() {
 		var gn = $("#groupName").prop("value").trim();
 		if (gn.length < 3) {
@@ -356,8 +403,7 @@ $(document).ready(function() {
 		} else if (gn.length > 20) {
 			safeToast("Group Name must be 20 characters or fewer.", "rounded red");
 		} else {
-			safeToast("Preferences saved and modes applied.", "rounded");
-			readOut(gn);
+			smartReadOut(gn);
 		}
 	});
 });

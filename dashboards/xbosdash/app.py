@@ -38,6 +38,9 @@ mongo = PyMongo(app)
 # Building name where this code is locally hosted
 BUILDING = 'avenal-movie-theatre'
 
+# Push default modes to mongodb once script starts
+INITIALIZED = False
+
 
 def crossdomain(origin=None, methods=None, headers=None,
                 max_age=21600, attach_to_all=True,
@@ -427,6 +430,30 @@ def home(filename):
 @app.route('/')
 @crossdomain(origin='*')
 def index():
+
+    global INITIALIZED
+
+    # When the scripts run for the first time, add default modes in mongodb
+    if not INITIALIZED:
+        default_modes = {
+            'type': 'modes',
+            'data': [
+                {'id': 0, 'name': "Closed", 'heating': "55", 'cooling': "85", 'enabled': True},
+                {'id': 1, 'name': "Open", 'heating': "70", 'cooling': "75", 'enabled': False},
+                {'id': 2, 'name': "Do Not Exceed", 'heating': "52", 'cooling': "83", 'enabled': True},
+                {'id': 3, 'name': "Other", 'heating': "51", 'cooling': "84", 'enabled': True},
+                {'id': 4, 'name': "Midnight", 'heating': "54", 'cooling': "88", 'enabled': False},
+                {'id': 5, 'name': "Early Morn", 'heating': "50", 'cooling': "80", 'enabled': True}
+            ]
+        }
+
+        try:
+            mongo.db.modes.insert_one(default_modes)
+            INITIALIZED = True
+            print('Successfully pushed default modes to MongoDB.')
+        except Exception as e:
+            return jsonify({'error': str(e)})
+
     return render_template('index.html')
 
 
@@ -436,14 +463,17 @@ def save_modes():
     """ Saves the modes (closed, open...) in schedule-groups.js page. """
 
     # Convert bytes to dict
-    data = request.data                 # class <'bytes'>
-    str_data = data.decode('utf-8')     # str
-    json_data = json.loads(str_data)    # dict
-    json_data['type'] = 'modes'         # Differentiates modes from groups
+    data = request.data                     # class <'bytes'>
+    str_data = data.decode('utf-8')         # str
+    json_data = json.loads(str_data)        # list(dict)
+
+    res = {}
+    res['type'] = 'modes'
+    res['data'] = json_data
 
     try:
-        # result is of type bson (binary json)
-        mongo.db.modes.insert_one(json_data)
+        # res is of type bson (binary json)
+        mongo.db.modes.insert_one(res)
         return jsonify({'success': str_data})
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -469,10 +499,11 @@ def get_modes():
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
 
-@app.route('/api/create_grouping')
+@app.route('/api/create_grouping', methods=['POST'])
 @crossdomain(origin="*")
 def create_grouping():
     """ Create new group. """
+
     # Convert bytes to dict
     data = request.data                 # class <'bytes'>
     str_data = data.decode('utf-8')     # str
@@ -487,20 +518,35 @@ def create_grouping():
         return jsonify({'error': str(e)})
 
 
-@app.route('/api/update_grouping')
+@app.route('/api/update_grouping', methods=['POST'])
 @crossdomain(origin="*")
 def update_grouping():
     """ Update a group's name, settings, times... """
 
     # Convert bytes to dict
-    data = request.data                 # class <'bytes'>
-    str_data = data.decode('utf-8')     # str
-    json_data = json.loads(str_data)    # dict
-    json_data['type'] = 'groups'        # Differentiates modes from groups
+    data = request.data                     # class <'bytes'>
+    str_data = data.decode('utf-8')         # str
+    orig_json_data = json.loads(str_data)   # dict
+    orig_json_data['type'] = 'groups'       # Differentiates groups from modes
+
+    # For updating, query db by the original group name.
+    # When updating the db, delete the original group name attribute since every record
+    # has only one attribute regarding group name, i.e. "group".
+    new_json_data = orig_json_data.copy()
+    del new_json_data['original_group_name']
 
     try:
-        # result is of type bson (binary json)
-        mongo.db.modes.update({'type': 'groups'}, json_data)
+        mongo.db.modes.update(
+            {
+                '$and': [
+                    {'type': 'groups'},
+                    {'group': orig_json_data['original_group_name']}
+                ]
+            },
+            {
+                '$set': new_json_data
+            }
+        )
         return jsonify({'success': str_data})
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -526,34 +572,40 @@ def get_groupings():
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
 
-@app.route('/api/delete_mode')
+@app.route('/api/delete_grouping', methods=['POST'])
 @crossdomain(origin="*")
-def delete_mode():
+def delete_grouping():
     """ Delete group from mongodb. """
 
-    all_docs = mongo.db.modes.find({'group_name': request.args.get('group_name')}).limit(1)
+    # Convert bytes to dict
+    data = request.data                     # class <'bytes'>
+    str_data = data.decode('utf-8')         # str
+    json_data = json.loads(str_data)        # dict
+    json_data['type'] = 'groups'            # Differentiates groups from modes
 
-    bson_result = ""
-    json_result = []
-    for i, doc in enumerate(all_docs):
-        bson_result = json_util.dumps(doc)
-        json_result.append(json.loads(bson_result))
-
-    if json_result:
-        try:
-            mongo.db.modes.delete_one({'group_name': request.args.get('group_name')})
-            return jsonify({'success': json_result})
-        except Exception as e:
-            return jsonify({'error': str(e)})
-    else:
-        return jsonify({'error': 'group name doesn\'t exist in db'})
+    try:
+        mongo.db.modes.delete_one(
+            {
+                '$and': [
+                    {'type': 'groups'},
+                    {'group': json_data['group']}
+                ]
+            }
+        )
+        return jsonify({'success': json_data})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 
 @app.route('/api/get_zones')
 @crossdomain(origin="*")
 def get_zones():
     """ This function retrieves all the zone names of a building """
-    return xsg.get_zones(BUILDING)
+    zones = xsg.get_zones(BUILDING)
+    if isinstance(zones, list) and len(zones) > 0:
+        return jsonify({'success': json.dumps(zones)})
+    else:
+        return jsonify({'error': 'couldn\'t retrieve zones'})
 
 
 if __name__ == '__main__':
