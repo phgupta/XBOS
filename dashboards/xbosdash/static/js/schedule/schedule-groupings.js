@@ -18,14 +18,12 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				// if (d["modes"] == null) { d = [{id: 0, name: "Closed", heating: "55", cooling: "85", enabled: true}, {id: 1, name: "Open", heating: "70", cooling: "75", enabled: false}, {id: 2, name: "Do Not Exceed", heating: "52", cooling: "83", enabled: true}, {id: 3, name: "Other", heating: "51", cooling: "84", enabled: true}, {id: 4, name: "Midnight", heating: "54", cooling: "88", enabled: false}, {id: 5, name: "Early Morn", heating: "50", cooling: "80", enabled: true}]; }
-				console.log('success get_modes from mongodb: ', d)
-				modeSettings = d['success'][0]['data'].sort(mySort);
+				modeSettings = d['success'].sort(mySort);
 				localStorage.setItem("mode-settings", JSON.stringify(modeSettings));
-				setModes();			},
+				setModes();
+			},
 			"error": function(d) {
-				// if (d["modes"] == null) { d = [{id: 0, name: "Closed", heating: "55", cooling: "85", enabled: true}, {id: 1, name: "Open", heating: "70", cooling: "75", enabled: false}, {id: 2, name: "Do Not Exceed", heating: "52", cooling: "83", enabled: true}, {id: 3, name: "Other", heating: "51", cooling: "84", enabled: true}, {id: 4, name: "Midnight", heating: "54", cooling: "88", enabled: false}, {id: 5, name: "Early Morn", heating: "50", cooling: "80", enabled: true}]; }
-				console.log('error get_modes from mongodb: ', d)
+				d = [{id: 0, name: "Closed", heating: "55", cooling: "85", enabled: true}, {id: 1, name: "Open", heating: "70", cooling: "75", enabled: false}, {id: 2, name: "Do Not Exceed", heating: "52", cooling: "83", enabled: true}, {id: 3, name: "Other", heating: "51", cooling: "84", enabled: true}, {id: 4, name: "Midnight", heating: "54", cooling: "88", enabled: false}, {id: 5, name: "Early Morn", heating: "50", cooling: "80", enabled: true}];
 				modeSettings = d.sort(mySort);
 				localStorage.setItem("mode-settings", JSON.stringify(modeSettings));
 				setModes();
@@ -153,25 +151,23 @@ $(document).ready(function() {
 		else { $("#group-btn").removeClass("disabled"); }
 	} setGB();
 
+	function cleanUp(s) { return s.replace("hvac_zone_", "").split("_"); }
+
 	function getCheckboxes() {
 		$.ajax({
 			"url": "http://0.0.0.0:5000/api/get_zones",
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				console.log("/api/get_zones success: ", d);
-				allZones = d["success"].split(",");
-				localStorage.setItem("all-zones", allZones);
+				allZones = $.map(d["success"], cleanUp);
+				localStorage.setItem("all-zones", JSON.stringify(allZones));
 				setCheckboxes();
 			},
 			"error": function(d) {
-			    console.log("/api/get_zones error: ", d)
-				if (d["zones"] == null) {
-				    d = { zones: ["North 1", "South 1", "East 1", "West 1", "North 2", "South 2", "East 2", "West 2", "North 3", "South 3", "East 3", "West 3", "North 4", "South 4", "East 4", "West 4", "North 5 Basketball", "North 6 Basketball", "South 5 Basketball", "South 6", "East 5", "East 6", "West 5", "West 6"]};
-				}
+				d = {zones: ["North 1", "South 1", "East 1", "West 1", "North 2", "South 2", "East 2", "West 2", "North 3", "South 3", "East 3", "West 3", "North 4", "South 4", "East 4", "West 4", "North 5 Basketball", "North 6 Basketball", "South 5 Basketball", "South 6", "East 5", "East 6", "West 5", "West 6"]};
 				allZones = d["zones"];
 				localStorage.setItem("all-zones", JSON.stringify(allZones));
-				setCheckboxes(d);
+				setCheckboxes();
 			}
 		});
 	}

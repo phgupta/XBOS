@@ -489,12 +489,9 @@ def get_modes():
 
     # CHECK: result will always return a cursor object?
     if result:
-        bson_result = ""
-        json_result = []
-        for i, doc in enumerate(result):
-            bson_result = json_util.dumps(doc)
-            json_result.append(json.loads(bson_result))
-        return jsonify({'success': json_result})
+        for doc in result:
+            doc = json.loads(json_util.dumps(doc))
+            return jsonify({'success': doc["data"]})
     else:
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
@@ -562,15 +559,13 @@ def get_groupings():
 
     # CHECK: result will always return a cursor object?
     if result:
-        bson_result = ""
-        json_result = []
-        for i, doc in enumerate(result):
-            bson_result = json_util.dumps(doc)
-            json_result.append(json.loads(bson_result))
-        return jsonify({'success': json_result})
+        groupings = []
+        for doc in result:
+            doc = json.loads(json_util.dumps(doc))
+            groupings.append(doc)
+        return jsonify({'success': groupings})
     else:
         return jsonify({'error': 'could not retrieve data from mongodb'})
-
 
 @app.route('/api/delete_grouping', methods=['POST'])
 @crossdomain(origin="*")
@@ -603,7 +598,8 @@ def get_zones():
     """ This function retrieves all the zone names of a building """
     zones = xsg.get_zones(BUILDING)
     if isinstance(zones, list) and len(zones) > 0:
-        return jsonify({'success': json.dumps(zones)})
+        # print("brandon", json.dumps(zones).replace("\"", "'"), "berookhim")
+        return jsonify({'success': zones})
     else:
         return jsonify({'error': 'couldn\'t retrieve zones'})
 

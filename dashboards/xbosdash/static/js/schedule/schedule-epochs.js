@@ -326,7 +326,6 @@ $(document).ready(function() {
 			obj.zones = zfg;
 			localStorage.removeItem("zones-for-group");
 			groupings.push(obj);
-			localStorage.setItem("all-groupings", JSON.stringify(groupings));
 			$.ajax({
 				"url": "http://0.0.0.0:5000/api/create_grouping",
 				"type": "POST",
@@ -342,12 +341,16 @@ $(document).ready(function() {
 			});
 		} else {
 			obj.zones = JSON.parse(localStorage.getItem(cgn + "-group"))["zones"];
-			obj.original_group_name = cgn;
+			if (name != cgn) {
+				localStorage.removeItem(cgn + "-group");
+			} else if (JSON.stringify(obj) == localStorage.getItem(cgn + "-group")) {
+				safeToast("No changes to be saved.", "rounded");
+				return;
+			}
 			var ind = findGroup(cgn);
 			// if (ind == null) { safeToast("Something went wrong.", "rounded red"); }
+			obj.original_group_name = cgn;
 			groupings[ind] = obj;
-			localStorage.setItem("all-groupings", JSON.stringify(groupings));
-			if (name != cgn) { localStorage.removeItem(cgn + "-group"); }
 			$.ajax({
 				"url": "http://0.0.0.0:5000/api/update_grouping",
 				"type": "POST",
@@ -360,8 +363,13 @@ $(document).ready(function() {
 				"error": function(d) {
 					console.log('/api/update_grouping error: ', obj);
 				}
+
 			});
 		}
+		if (obj.original_group_name != null) {
+			delete obj.original_group_name;	
+		}
+		localStorage.setItem("all-groupings", JSON.stringify(groupings));
 		localStorage.setItem("curr-group-name", name);
 		localStorage.setItem(name + "-group", JSON.stringify(obj));
 		safeToast("Changes successfully updated.", "rounded");
