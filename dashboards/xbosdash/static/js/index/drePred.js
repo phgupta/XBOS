@@ -1,6 +1,11 @@
 $(document).ready(function() {
 	let dotw = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	setTimeout(function() { $("#forecast-loader").hide(); $("#forecast-row").css("display", "flex").show(); }, 500);
+	// setTimeout(function() { $("#forecast-loader").hide(); $("#forecast-row").css("display", "flex").show(); }, 500);
+
+	function safeToast(s, c, t=5000) {
+		var toastElement = document.querySelector('.toast');
+		if (!toastElement) { M.toast({html: s, classes: c, displayLength: t}); }
+	}
 
 	function setPred() {
 		$.ajax({
@@ -13,19 +18,11 @@ $(document).ready(function() {
 				days.forEach(function(elem) {
 					s += "<div class='z-depth-1 center-align forecast-card " + getColor(elem.likelihood) + "'><h6>" + getDate(elem.date) + "</h6><h6>event " + elem.likelihood + "</h6></div>";
 				});
-				$("#forecast-loader").hide();
+				// $("#forecast-loader").hide();
 				$("#forecast-row").html(s);
 			},
 			"error": function(d) {
-				console.log("failed");
-				d = {"days": [{"date": 1533324092,"likelihood": "unlikely"},{"date": 1566624092, "likelihood": "possible"}]};
-				var days = d.days;
-				var s = "";
-				days.forEach(function(elem) {
-					s += "<div class='z-depth-1 center-align forecast-card " + getColor(elem.likelihood) + "'><h6>" + getDate(elem.date) + "</h6><h6>event " + elem.likelihood + "</h6></div>";
-				});
-				$("#forecast-loader").hide();
-				$("#forecast-row").html(s);
+				safeToast("Prediction data could not be loaded.", "red");
 			}
 		});
 	} setPred();

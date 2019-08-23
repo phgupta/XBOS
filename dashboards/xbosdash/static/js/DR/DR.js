@@ -2,7 +2,7 @@ $(document).ready(function() {
 	M.AutoInit();
 	var histArr;
 
-	var checked = false;
+	var checked = true;
 	// $("#bvz").click(mySwitch);
 	function mySwitch(x) {
 		checked = x;
@@ -23,7 +23,7 @@ $(document).ready(function() {
 		}
 		checked = !checked;
 		$("#checkbox").prop("checked", checked);
-	}
+	} mySwitch(checked);
 
 	$("#my-div").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });
 	$("#label").click(function(event) { event.stopImmediatePropagation(); $("#checkbox").prop("checked", checked); });

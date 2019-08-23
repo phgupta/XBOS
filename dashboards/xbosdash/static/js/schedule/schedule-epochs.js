@@ -1,9 +1,8 @@
 $(document).ready(function() {
-	$(window).bind('beforeunload', function() { return ""; });
 	M.AutoInit();
 
-	let pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
-	let piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
+	var pipvals = ["12am", "2am", "4am", "6am", "8am", "10am", "12pm", "2pm", "4pm", "6pm", "8pm", "10pm", "12am"];
+	var piprev = ["12am", "10pm", "8pm", "6pm", "4pm", "2pm", "12pm", "10am", "8am", "6am", "4am", "2am", "12am"];
 
 	pips = {
 		mode: "values",
@@ -265,7 +264,10 @@ $(document).ready(function() {
 		});
 		setTop();
 		$.each(obj["settings"], function(i, v) {
-			sliderColors[dayToIndex[i]] = $.map(v, function(val) { return colors[val]; });
+			sliderColors[dayToIndex[i]] = $.map(v, function(val) {
+				if (val == null) { return "#CCC"; }
+				else { return colors[val]; }
+			});
 			sliderModes[dayToIndex[i]] = v;
 		});
 		setColors();
@@ -349,25 +351,23 @@ $(document).ready(function() {
 			}
 			var ind = findGroup(cgn);
 			// if (ind == null) { safeToast("Something went wrong.", "rounded red"); }
-			obj.original_group_name = cgn;
+			// obj.original_group_name = cgn;
 			groupings[ind] = obj;
+			var dup = JSON.parse(JSON.stringify(obj));
+			dup.original_group_name = cgn;
 			$.ajax({
 				"url": "http://0.0.0.0:5000/api/update_grouping",
 				"type": "POST",
 				"dataType": "json",
 				"contentType": 'application/json',
-				"data": JSON.stringify(obj),
+				"data": JSON.stringify(dup),
 				"success": function(d) {
 					console.log('/api/update_grouping success: ', d);
 				},
 				"error": function(d) {
-					console.log('/api/update_grouping error: ', obj);
+					console.log('/api/update_grouping error: ', dup);
 				}
-
 			});
-		}
-		if (obj.original_group_name != null) {
-			delete obj.original_group_name;	
 		}
 		localStorage.setItem("all-groupings", JSON.stringify(groupings));
 		localStorage.setItem("curr-group-name", name);

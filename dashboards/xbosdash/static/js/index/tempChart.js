@@ -111,8 +111,8 @@ $(document).ready(function() {
         var mean = new Object();
         mean.name = "Average";
         mean.data = stdData(m, pa, mean.name);
-        mean.lineWidth = 1;
-        mean.color = "#000000";
+        mean.lineWidth = 2;
+        mean.color = "#9e9e9e";
         // mean.showInLegend = false;
 
         var range = new Object();
@@ -284,7 +284,8 @@ $(document).ready(function() {
             }
         },
         "xAxis": {
-            "type": "category"
+            "type": "category",
+            "tickInterval": 4
         },
         "yAxis": {
             "title": {

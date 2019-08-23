@@ -19,22 +19,27 @@ $(document).ready(function() {
 	$("#hvac-loader").show();
 	$("#hvac-loader").addClass("scale-in");
 
+	function cleanUp(s) { return s.replace("hvac_zone_", "").replace("_", " "); }
 
-	// TODO: get zone names from api
-	/* gets zonenames from API and trims them to 13 chars or less */
-	var zoneNames = ["basketball", "basketball", "wwwwwwwww9", "wwwwwwwwwwwwww11", "Wwwwwwwwwwwwwww11"]
-	// var zoneNames = [];
+	/* gets zonenames from API and then trims them to 13 chars or less */
+	// var zoneNames = []
 	// $.ajax({
-	// 	"url": "http://127.0.0.1:5000/api/zoneNames",
+	// 	"url": "http://0.0.0.0:5000/api/get_zones",
 	// 	"type": "GET",
 	// 	"dataType": "json",
 	// 	"success": function(d) {
-	// 		zoneNames = d["names"];
+	// 		zoneNames = $.map(d["success"], cleanUp);
+	// 		// localStorage.setItem("all-zones", JSON.stringify(allZones));
+	// 		// setCheckboxes();
 	// 	}
 	// });
-	zoneNames = $.map(zoneNames, function(v) {
-		return v.slice(0, 13);
-	});
+	
+	// zoneNames = $.map(zoneNames, function(v) {
+	// 	return v.slice(0, 13);
+	// });
+
+	/* null first element because svg attributes are indexed from 1 */
+	var zoneNames = [null];
 
 	var setpts = [[]];
 	$.ajax({
@@ -42,6 +47,12 @@ $(document).ready(function() {
 		"type": "GET",
 		"dataType": "json",
 		"success": function(d) {
+			// console.log(d);
+			for (var o in d) {
+				// console.log(o);
+				zoneNames.push(cleanUp(o));
+			}
+			// console.log(zoneNames);
 			/* gets rid of the loader and shows the accordian */
 			$("#hvac-loader").addClass("scale-out");
 			$("#hvac").addClass("scale-in");
@@ -94,6 +105,11 @@ $(document).ready(function() {
 			function myHover(num) { hvacs.forEach(function(v) { v.css("opacity", num); });}
 		}
 	});
+
+	function safeToast(s, c, t=5000) {
+		var toastElement = document.querySelector('.toast');
+		if (!toastElement) { M.toast({html: s, classes: c, displayLength: t}); }
+	}
 	
 	var tb = true;
 	$("#tempbtn").click(function() {
@@ -133,7 +149,7 @@ $(document).ready(function() {
 			x.addClass("scale-in");
 			clearTimeout(this);
 		}, 250);
-		if (!tb) { console.log(ret); M.toast({html: "Your preferences have been applied.", displayLength: 3000}); }
+		if (!tb) { console.log(ret); safeToast("Your preferences have been applied.", ""); }
 		tb = !tb;
 	});
 

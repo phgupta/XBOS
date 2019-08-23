@@ -120,16 +120,7 @@ $(document).ready(function() {
 		}
 	}
 
-	// http://www.jquerybyexample.net/2012/02/remove-item-from-array-using-jquery.html
 	function deleteGrouping(name) {
-		localStorage.removeItem(name + "-group");
-		allGroupings.splice(findGroup(name), 1);
-		localStorage.setItem("all-groupings", JSON.stringify(allGroupings));
-
-		// Reload causes the entire console history to be deleted too.
-		window.location.reload();
-
-		safeToast("Grouping successfully deleted.", "rounded");
 		$.ajax({
 			"url": "http://0.0.0.0:5000/api/delete_grouping",
 			"type": "POST",
@@ -138,9 +129,15 @@ $(document).ready(function() {
 			"data": JSON.stringify({'group': name}),
 			"success": function(d) {
 				console.log("/api/delete_grouping success: ", d);
+				localStorage.removeItem(name + "-group");
+				// http://www.jquerybyexample.net/2012/02/remove-item-from-array-using-jquery.html
+				allGroupings.splice(findGroup(name), 1);
+				localStorage.setItem("all-groupings", JSON.stringify(allGroupings));
+				safeToast("Grouping successfully deleted.", "rounded");
 			},
 			"error": function(d) {
 				console.log('/api/delete_grouping error: ', name);
+				safeToast("Deletion was unsuccessful.", "rounded red");
 			}
 		});
 	}

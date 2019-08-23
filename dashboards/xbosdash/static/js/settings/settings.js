@@ -1,9 +1,22 @@
 $(document).ready(function() {
+	function safeToast(s, c, t=2000) {
+		var toastElement = document.querySelector('.toast');
+		if (!toastElement) { M.toast({html: s, classes: c, displayLength: t}); }
+	}
+
 	var emnum = 0;
 	var rows = 1;
 	$("#add-emails").click(addEntry);
 	function addEntry() {
-		if (rows >= 20) { M.toast({ html: 'You can only subscribe 40 users at once.', classes: 'red', displayLength: 3000 }); return; }
+		if (rows >= 20) { safeToast("You cannot subscribe > 40 users at once.", "red"); return; }
+		var ex = true;
+		$(".validate").each(function() {
+			if (ex && (!this.checkValidity() || this.value == "")) {
+				safeToast("You must first enter valid emails.", "red");
+				ex = false;
+				return;
+			}
+		}); if (!ex) { return; }
 		rows += 1;
 		$("#notif-card").append("<div id='emails-" + emnum + "' class='row valign-wrapper'><div class='input-field col s5'><input class='validate' type='email'><label>Email Address</label></div><div class='col tiny'></div><div class='input-field col s5'><input class='validate' type='email'><label>Email Address</label></div><div class='col s1-7 center-align'><a id='emails-" + emnum + "-del' class='btn-floating waves-effect waves-light red btn'><i class='material-icons'>clear</i></a></div></div>");
 		$("#emails-" + emnum + "-del").click(function() { rows -= 1; $("#" + this.id.replace("-del", "")).remove(); });
@@ -59,13 +72,13 @@ $(document).ready(function() {
 		notifSummary(x);
 	}
 
-	function invalid(x) { M.toast({ html: 'Some ' + x + ' fields are missing/incorrect!', classes: 'red', displayLength: 3000 }); return false; }
+	function invalid(x) { safeToast("Some " + x + " fields are missing/incorrect!", "red"); return false; }
 
 	function notifSummary(x) {
 		var s = "Saved! You will be notified";
 		if (x.dayBefore) { s += " 1 day before confirmed events"; if (x.forecast) { s += " and for 5-day forecasts."; }}
 		else if (x.forecast) { s += " for 5-day forecasts."; }
-		M.toast({html: s, displayLength: 4000});
+		safeToast(s, "", 3500);
 	}
 
 });
