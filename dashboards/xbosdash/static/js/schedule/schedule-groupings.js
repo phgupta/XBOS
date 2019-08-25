@@ -148,9 +148,9 @@ $(document).ready(function() {
 		else { $("#group-btn").removeClass("disabled"); }
 	} setGB();
 
-	function cleanUp(s) { return s.replace("hvac_zone_", "").split("_"); }
+	function cleanUp(s) { return s.replace("hvac_zone_", "").replace("_", " "); }
 
-	function getCheckboxes() {
+	function getZones() {
 		$.ajax({
 			"url": "http://0.0.0.0:5000/api/get_zones",
 			"type": "GET",
@@ -192,7 +192,7 @@ $(document).ready(function() {
 		setGB();
 	}
 
-	if (allZones == null) { getCheckboxes(); } else { setCheckboxes(); }
+	if (allZones == null) { getZones(); } else { setCheckboxes(); }
 
 	function cbClicks() {
 		$(".filled-in").each(function() {

@@ -222,8 +222,7 @@ $(document).ready(function() {
 			"drillUpText": "◄ {series.name}"
 		},
 		"xAxis": {
-			"type": "category",
-			"tickInterval": 8
+			"type": "category"
 		},
 		"yAxis": {
 			"title": {

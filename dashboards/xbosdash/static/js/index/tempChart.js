@@ -284,8 +284,7 @@ $(document).ready(function() {
             }
         },
         "xAxis": {
-            "type": "category",
-            "tickInterval": 4
+            "type": "category"
         },
         "yAxis": {
             "title": {

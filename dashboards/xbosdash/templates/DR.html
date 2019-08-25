@@ -38,16 +38,16 @@
 	<div class="container">
 		<div id="my-div" class="switch">
 			<label id="label" class="valign-wrapper" style="cursor: default;">
-				<span id="switch-bldng" class="black-text" style="font-size: 24px; cursor: pointer;">Building</span>
+				<span id="switch-zone" class="black-text" style="font-size: 24px; cursor: pointer;">Zones</span>
 				<input id="checkbox" type="checkbox"/>
 				<span id="lever" class="lever" style="cursor: pointer;"></span>
-				<span id="switch-zone" style="font-size: 24px; cursor: pointer;">Zones</span>
+				<span id="switch-bldng" style="font-size: 24px; cursor: pointer;">Building</span>
 			</label>
 		</div>
 
 		<div class="row"></div>
 
-		<div id="bldng-chart" class="section z-depth-1">
+		<div id="bldng-chart" class="section z-depth-1" style="display: none;">
 			<div class="row valign-wrapper">
 				<div id="bldng-DR" class="col s12"></div>
 			</div>
@@ -65,7 +65,7 @@
 			</div>
 		</div>
 
-		<div id="zone-chart" class="section z-depth-1" style="display: none;">
+		<div id="zone-chart" class="section z-depth-1">
 			<div class="row valign-wrapper">
 				<div id="zone-DR" class="col s12"></div>
 			</div>
@@ -93,7 +93,7 @@
 			</div>
 		</div>
 
-		<div id="bldng-config" class="section">
+		<div id="bldng-config" class="section" style="display: none;">
 			<div class="section z-depth-1">
 				<div class="row center-align">
 					<div class="col s2"></div>
@@ -109,9 +109,7 @@
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
 					<div class="col s4 right-align">
 						<a id="historic-date" class="dropdown-trigger btn" data-target="date-dropdown">Historical</a>
-						<ul id='date-dropdown' class='dropdown-content'>
-							<li class="his-sel active"><a>None</a></li>
-						</ul>
+						<ul id='date-dropdown' class='dropdown-content'></ul>
 					</div>
 					<div class="col s4 center-align"><a id="bldng-btn" class="waves-effect waves-light btn">Run</a></div>
 					<div class="col s4 left-align"><h5>Simulation</h5></div>
@@ -121,13 +119,13 @@
 						<h5 id="historic-dis" class="bldng-his-val grey-text">_____</h5>
 						<h5 id="historic-money-savings" class="bldng-his-val grey-text">_____</h5>
 						<h5 id="historic-energy-savings" class="bldng-his-val grey-text">_____</h5>
-						<h5 class="his-cooling-deg grey-text">_____</h5>
+						<h5 id="historic-cooling-degrees" class="bldng-his-val grey-text">_____</h5>
 					</div>
 					<div class="col s4 center-align">
 						<h5>Cost-Comfort Index</h5>
 						<h5>Discomfort</h5>
 						<h5>$ Saved</h5>
-						<h5>kWH Saved</h5>
+						<h5>kWh Saved</h5>
 						<h5>Cooling Degree-Hrs</h5>
 					</div>
 					<div class="col s2">
@@ -135,26 +133,29 @@
 						<h5 id="sim-dis" class="bldng-val purple-text text-darken-5">_____</h5>
 						<h5 id="sim-money-savings" class="bldng-val green-text text-darken-1">_____</h5>
 						<h5 id="sim-energy-savings" class="bldng-val orange-text text-darken-1">_____</h5>
-						<h5 class="sim-cooling-deg blue-text text-darken-1">_____</h5>
+						<h5 id="sim-cooling-degrees" class="bldng-val blue-text text-darken-1">_____</h5>
 					</div>
 					<div class="col s2"></div>
 				</div>
 			</div>
 		</div>
 
-		<div id="zone-config" class="section" style="display: none;">
+		<div id="zone-config" class="section">
 			<div class="section z-depth-1">
 				<div class="row center-align">
 					<div class="col s2"></div>
 					<div class="col s8">
 						<h4 class="center-align dr-title" style="margin-bottom: 0;">Orinda Community Center Building</h4>
-						<h6 class="center-align" style="margin-bottom: 0;">use the sliders below to set each zone's lambda value</h6>
+						<h6 class="center-align" style="margin-bottom: 0;">Use the sliders below to set each zone's Cost-Comfort Index</h6>
 					</div>
 					<div class="col s2"></div>
 					<div class="col s3 right-align"><h5>↑ Comfort</h5></div>
 					<div class="col s6"><p class="range-field"><input type="range" disabled="disabled"/></p></div>
 					<div class="col s3 left-align"><h5>Costs ↓</h5></div>
-					<div class="col s4 right-align">
+					<div class="col s8 push-s2">
+						<h6 class="center-align" style="margin: 0;">Then click <a class="btn-small disabled">Run</a> to simulate a DR event for that zone</h6>
+					</div>
+					<!-- <div class="col s4 right-align">
 						<a id="zone-historic-date" class="dropdown-trigger btn" data-target="zone-date-dropdown">Historical</a>
 						<ul id='zone-date-dropdown' class='dropdown-content'>
 							<li class="zone-his-sel active"><a>None</a></li>
@@ -184,7 +185,7 @@
 						<h5 id="sim-energy-avg" class="sum-val orange-text text-darken-1">_____</h5>
 						<h5 class="sim-cooling-deg blue-text text-darken-1">_____</h5>
 					</div>
-					<div class="col s2"></div>
+					<div class="col s2"></div> -->
 				</div>
 			</div>
 			<div class="row"></div>

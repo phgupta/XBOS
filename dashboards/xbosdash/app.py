@@ -36,7 +36,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/modes"
 mongo = PyMongo(app)
 
 # Building name where this code is locally hosted
-BUILDING = 'avenal-movie-theatre'
+BUILDING = 'ciee'
 
 # Push default modes to mongodb once script starts
 INITIALIZED = False
@@ -367,17 +367,12 @@ def simulate_lambda_site(drlambda, date):
         end = datetime.strptime(end.strftime(fmt), fmt)
 
         try:
-            # print('sites[0]: ', sites[0])
-            # print('start: ', start)
-            # print('end: ', end)
-            # print('float(drlambda): ', float(drlambda))
-            # print('zone: ', zone)
             res = xsg.simulation(sites[0], start, end, '1h', float(drlambda), zone=zone)
             # dataframe to dict
             formatted = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
             ret.update(formatted)
             print(formatted)
-            #return jsonify(formatted)
+            # return jsonify(formatted)
         except Exception as e:
             return jsonify({'error': 'could not get prediction', 'msg': str(e)})
     print(ret)
@@ -598,7 +593,6 @@ def get_zones():
     """ This function retrieves all the zone names of a building """
     zones = xsg.get_zones(BUILDING)
     if isinstance(zones, list) and len(zones) > 0:
-        # print("brandon", json.dumps(zones).replace("\"", "'"), "berookhim")
         return jsonify({'success': zones})
     else:
         return jsonify({'error': 'couldn\'t retrieve zones'})

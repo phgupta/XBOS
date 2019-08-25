@@ -35,7 +35,7 @@ $(document).ready(function() {
 			else if (this.value.length) { toRet.recipients.push(this.value); }
 		}); if (ex) { return; }
 		if (!toRet.recipients.length) { return invalid("recipient"); }
-		// doSub(toRet);
+		doSub(toRet);
 	});
 
 	function doSub(x) {
