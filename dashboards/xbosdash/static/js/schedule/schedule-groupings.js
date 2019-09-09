@@ -18,11 +18,13 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				modeSettings = d['success'].sort(mySort);
+				console.log("success", "get_modes", d);
+				modeSettings = d.sort(mySort);
 				localStorage.setItem("mode-settings", JSON.stringify(modeSettings));
 				setModes();
 			},
 			"error": function(d) {
+				console.log("error", "get_modes", d);
 				d = [{id: 0, name: "Closed", heating: "55", cooling: "85", enabled: true}, {id: 1, name: "Open", heating: "70", cooling: "75", enabled: false}, {id: 2, name: "Do Not Exceed", heating: "52", cooling: "83", enabled: true}, {id: 3, name: "Other", heating: "51", cooling: "84", enabled: true}, {id: 4, name: "Midnight", heating: "54", cooling: "88", enabled: false}, {id: 5, name: "Early Morn", heating: "50", cooling: "80", enabled: true}];
 				modeSettings = d.sort(mySort);
 				localStorage.setItem("mode-settings", JSON.stringify(modeSettings));
@@ -51,13 +53,13 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				console.log('/api/get_groupings success: ', d["success"]);
-				allGroupings = d["success"];
+				console.log('/api/get_groupings success: ', d);
+				allGroupings = d;
 				localStorage.setItem("all-groupings", JSON.stringify(allGroupings));
 				setGroupings();
 			},
 			"error": function(d) {
-				if (d["groupings"] == null) { d = [{group: "Basketball Courts 1", settings:{fri: [2, 1, 0], mon: [2, 1, 0], sat: [4, 3, 2], sun: [0, 2, 1], thu: [1, 3, 4], tue: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 1", "South 1", "East 1", "West 1"]},{group: "Basketball Courts 2", settings:{sun: [2, 1, 0], mon: [2, 1, 0], thu: [4, 3, 2], fri: [0, 2, 1], sat: [1, 3, 4], wed: [4, 3, 4], tue: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 2", "South 2", "East 2", "West 2"]},{group: "Basketball Courts 3", settings:{mon: [2, 1, 0], fri: [2, 1, 0], sat: [4, 3, 2], thu: [0, 2, 1], sun: [1, 3, 4], tue: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 3", "South 3", "East 3", "West 3"]},{group: "Basketball Courts 4", settings:{fri: [2, 1, 0], sat: [2, 1, 0], mon: [4, 3, 2], sun: [0, 2, 1], tue: [1, 3, 4], thu: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 4", "South 4", "East 4", "West 4"]}]; }
+				if (d == null) { d = [{group: "Basketball Courts 1", settings:{fri: [2, 1, 0], mon: [2, 1, 0], sat: [4, 3, 2], sun: [0, 2, 1], thu: [1, 3, 4], tue: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 1", "South 1", "East 1", "West 1"]},{group: "Basketball Courts 2", settings:{sun: [2, 1, 0], mon: [2, 1, 0], thu: [4, 3, 2], fri: [0, 2, 1], sat: [1, 3, 4], wed: [4, 3, 4], tue: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 2", "South 2", "East 2", "West 2"]},{group: "Basketball Courts 3", settings:{mon: [2, 1, 0], fri: [2, 1, 0], sat: [4, 3, 2], thu: [0, 2, 1], sun: [1, 3, 4], tue: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 3", "South 3", "East 3", "West 3"]},{group: "Basketball Courts 4", settings:{fri: [2, 1, 0], sat: [2, 1, 0], mon: [4, 3, 2], sun: [0, 2, 1], tue: [1, 3, 4], thu: [4, 3, 4], wed: [1, 0, 2]},times: {fri: ["8.00", "18.00"], mon: ["2.00", "17.00"], sat: ["3.00", "16.00"], sun: ["4.00", "15.00"], thu: ["5.00", "14.00"], tue: ["6.00", "13.00"], wed: ["7.00", "12.00"]}, zones: ["North 4", "South 4", "East 4", "West 4"]}]; }
 				allGroupings = d;
 				localStorage.setItem("all-groupings", JSON.stringify(allGroupings));
 				setGroupings();
@@ -126,7 +128,7 @@ $(document).ready(function() {
 			"type": "POST",
 			"dataType": "json",
 			"contentType": 'application/json',
-			"data": JSON.stringify({'group': name}),
+			"data": JSON.stringify(name),
 			"success": function(d) {
 				console.log("/api/delete_grouping success: ", d);
 				localStorage.removeItem(name + "-group");
@@ -136,7 +138,7 @@ $(document).ready(function() {
 				safeToast("Grouping successfully deleted.", "rounded");
 			},
 			"error": function(d) {
-				console.log('/api/delete_grouping error: ', name);
+				console.log('/api/delete_grouping error: ', name, d);
 				safeToast("Deletion was unsuccessful.", "rounded red");
 			}
 		});
@@ -148,7 +150,7 @@ $(document).ready(function() {
 		else { $("#group-btn").removeClass("disabled"); }
 	} setGB();
 
-	function cleanUp(s) { return s.replace("hvac_zone_", "").replace("_", " "); }
+	// function cleanUp(s) { return s.replace("hvac_zone_", "").replace("_", " "); }
 
 	function getZones() {
 		$.ajax({
@@ -156,7 +158,7 @@ $(document).ready(function() {
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {
-				allZones = $.map(d["success"], cleanUp);
+				allZones = d;
 				localStorage.setItem("all-zones", JSON.stringify(allZones));
 				setCheckboxes();
 			},
@@ -233,7 +235,6 @@ $(document).ready(function() {
 
 	function isChecked(s) { if (s) { return " checked"; } else { return ""; }}
 
-
 	$("#save-modes").click(function() { smartSaveModes() } );
 
 	function createModeObj() {
@@ -273,9 +274,11 @@ $(document).ready(function() {
 				"data": stringified,
 				"success": function(d) {
 				    console.log('/api/save_modes success: ', d);
+				    safeToast("Modes successfully updated.", "rounded");
 				},
 				"error": function(d) {
-					safeToast("Current modes successfully updated.", "rounded");
+					console.log('/api/save_modes error: ', d);
+					safeToast("Modes failed to update.", "red rounded");
 					// console.log(obj);
 					// console.log(stringified);
 				}

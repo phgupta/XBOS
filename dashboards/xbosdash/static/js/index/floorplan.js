@@ -6,9 +6,9 @@ $(document).ready(function() {
 
 	$.ajax({
         // make sure file exists. replace 'ciee' with name of building (underscores)
-        url: '/svg/ciee.svg',
-        success: function(data) {
-            console.log(data);
+        "url": '/svg/ciee.svg',
+        "success": function(data) {
+            // console.log(data);
             $("#floorplan").html(data)
         }
     });
@@ -29,7 +29,7 @@ $(document).ready(function() {
 		"type": "GET",
 		"dataType": "json",
 		"success": function(d) {
-			console.log(d);
+			// console.log(d);
 			// console.log(d);
 			for (var o in d) {
 				// console.log(o);

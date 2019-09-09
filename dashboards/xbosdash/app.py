@@ -13,6 +13,8 @@ import pendulum
 import toml
 import pytz
 import json
+import glob
+import os
 from bson import json_util
 from collections import defaultdict
 from functools import update_wrapper
@@ -36,7 +38,7 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/modes"
 mongo = PyMongo(app)
 
 # Building name where this code is locally hosted
-BUILDING = 'ciee'
+BUILDING = 'avenal-movie-theatre'
 
 # Push default modes to mongodb once script starts
 INITIALIZED = False
@@ -367,12 +369,17 @@ def simulate_lambda_site(drlambda, date):
         end = datetime.strptime(end.strftime(fmt), fmt)
 
         try:
+            # print('sites[0]: ', sites[0])
+            # print('start: ', start)
+            # print('end: ', end)
+            # print('float(drlambda): ', float(drlambda))
+            # print('zone: ', zone)
             res = xsg.simulation(sites[0], start, end, '1h', float(drlambda), zone=zone)
             # dataframe to dict
             formatted = {k: df.set_index(df.index.astype(int)).to_dict() for k, df in res.items()}
             ret.update(formatted)
             print(formatted)
-            # return jsonify(formatted)
+            #return jsonify(formatted)
         except Exception as e:
             return jsonify({'error': 'could not get prediction', 'msg': str(e)})
     print(ret)
@@ -413,6 +420,16 @@ def serve_occupancy(last, bucketsize):
 #@crossdomain(origin='*')
 #def setpoint_today():
 #    pass
+
+
+@app.route('/svg/<filename>')
+@crossdomain(origin='*')
+def getsvg(filename):
+    supported_files = glob.glob('static/svg/*.svg')
+    if filename in map(os.path.basename, supported_files):
+        with open(f'static/svg/{filename}') as f:
+            return f.read()
+    return jsonify({'error': f'no svg by name of {filename}'})
 
 
 @app.route('/<filename>')
@@ -486,7 +503,7 @@ def get_modes():
     if result:
         for doc in result:
             doc = json.loads(json_util.dumps(doc))
-            return jsonify({'success': doc["data"]})
+            return jsonify(doc["data"])
     else:
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
@@ -497,6 +514,7 @@ def create_grouping():
     """ Create new group. """
 
     # Convert bytes to dict
+    print("shalom")
     data = request.data                 # class <'bytes'>
     str_data = data.decode('utf-8')     # str
     json_data = json.loads(str_data)    # dict
@@ -548,6 +566,7 @@ def update_grouping():
 @crossdomain(origin="*")
 def get_groupings():
     """ Retrieve all groups for the building. """
+    print("shalom from get_groupings")
 
     # Get all groups of building
     result = mongo.db.modes.find({'type': 'groups'})
@@ -558,7 +577,9 @@ def get_groupings():
         for doc in result:
             doc = json.loads(json_util.dumps(doc))
             groupings.append(doc)
-        return jsonify({'success': groupings})
+        print("shalom again!")
+        print(groupings)
+        return jsonify(groupings)
     else:
         return jsonify({'error': 'could not retrieve data from mongodb'})
 
@@ -571,14 +592,15 @@ def delete_grouping():
     data = request.data                     # class <'bytes'>
     str_data = data.decode('utf-8')         # str
     json_data = json.loads(str_data)        # dict
-    json_data['type'] = 'groups'            # Differentiates groups from modes
+    # json_data['type'] = 'groups'            # Differentiates groups from modes
+    print(json_data)
 
     try:
         mongo.db.modes.delete_one(
             {
                 '$and': [
                     {'type': 'groups'},
-                    {'group': json_data['group']}
+                    {'group': json_data}
                 ]
             }
         )
@@ -593,10 +615,48 @@ def get_zones():
     """ This function retrieves all the zone names of a building """
     zones = xsg.get_zones(BUILDING)
     if isinstance(zones, list) and len(zones) > 0:
-        return jsonify({'success': zones})
+        # print("brandon", json.dumps(zones).replace("\"", "'"), "berookhim")
+        return jsonify(zones)
     else:
         return jsonify({'error': 'couldn\'t retrieve zones'})
 
+def get_all_db():
+    """ Helper function to get all documents in mongodb """
+
+    result = mongo.db.modes.find({})
+
+    if result:
+        groupings = []
+        for doc in result:
+            doc = json.loads(json_util.dumps(doc))
+            groupings.append(doc)
+        print(groupings)
+    else:
+        print('Error')
+
+
+def delete_all_db():
+    """ Helper function to delete all documents in mongodb """
+
+    result = mongo.db.modes.remove({})
+    if result:
+        print('Success')
+    else:
+        print('Error')
+
+    result = mongo.db.modes.find({})
+    if result:
+        groupings = []
+        for doc in result:
+            doc = json.loads(json_util.dumps(doc))
+            groupings.append(doc)
+        print(groupings)
+    else:
+        print('Error')
+
 
 if __name__ == '__main__':
+
+    get_all_db()
+    # delete_all_db()
     app.run(host='0.0.0.0', debug=True)

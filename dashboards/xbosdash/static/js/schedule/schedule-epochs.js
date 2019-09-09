@@ -326,8 +326,6 @@ $(document).ready(function() {
 		var cgn = localStorage.getItem("curr-group-name");
 		if (zfg != null) {
 			obj.zones = zfg;
-			localStorage.removeItem("zones-for-group");
-			groupings.push(obj);
 			$.ajax({
 				"url": "http://0.0.0.0:5000/api/create_grouping",
 				"type": "POST",
@@ -336,16 +334,22 @@ $(document).ready(function() {
 				"data": JSON.stringify(obj),
 				"success": function(d) {
 					console.log('/api/create_grouping success: ', d);
+					localStorage.removeItem("zones-for-group");
+					groupings.push(obj);
+					localStorage.setItem("all-groupings", JSON.stringify(groupings));
+					localStorage.setItem("curr-group-name", name);
+					localStorage.setItem(name + "-group", JSON.stringify(obj));
+					safeToast("Changes successfully updated.", "rounded");
 				},
 				"error": function(d) {
 					console.log('/api/create_grouping error: ', d);
+					safeToast("Changes could not be saved.", "red rounded");
 				}
 			});
 		} else {
 			obj.zones = JSON.parse(localStorage.getItem(cgn + "-group"))["zones"];
-			if (name != cgn) {
-				localStorage.removeItem(cgn + "-group");
-			} else if (JSON.stringify(obj) == localStorage.getItem(cgn + "-group")) {
+			// name == cgn check not needed but let's leave it
+			if (name == cgn && JSON.stringify(obj) == localStorage.getItem(cgn + "-group")) {
 				safeToast("No changes to be saved.", "rounded");
 				return;
 			}
@@ -362,17 +366,18 @@ $(document).ready(function() {
 				"contentType": 'application/json',
 				"data": JSON.stringify(dup),
 				"success": function(d) {
-					console.log('/api/update_grouping success: ', d);
+					console.log('/api/update_grouping success: ', dup);
+					if (name != cgn) { localStorage.removeItem(cgn + "-group"); }
+					localStorage.setItem("all-groupings", JSON.stringify(groupings));
+					localStorage.setItem("curr-group-name", name);
+					localStorage.setItem(name + "-group", JSON.stringify(obj));
+					safeToast("Changes successfully updated.", "rounded");
 				},
 				"error": function(d) {
 					console.log('/api/update_grouping error: ', dup);
 				}
 			});
 		}
-		localStorage.setItem("all-groupings", JSON.stringify(groupings));
-		localStorage.setItem("curr-group-name", name);
-		localStorage.setItem(name + "-group", JSON.stringify(obj));
-		safeToast("Changes successfully updated.", "rounded");
 	}
 
 	function updateModes() {
