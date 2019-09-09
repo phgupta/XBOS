@@ -37,9 +37,6 @@ app.config['MONGO_DBNAME'] = 'modes'
 app.config["MONGO_URI"] = "mongodb://localhost:27017/modes"
 mongo = PyMongo(app)
 
-# Building name where this code is locally hosted
-BUILDING = 'avenal-movie-theatre'
-
 # Push default modes to mongodb once script starts
 INITIALIZED = False
 
@@ -613,7 +610,7 @@ def delete_grouping():
 @crossdomain(origin="*")
 def get_zones():
     """ This function retrieves all the zone names of a building """
-    zones = xsg.get_zones(BUILDING)
+    zones = xsg.get_zones(sites[0])
     if isinstance(zones, list) and len(zones) > 0:
         # print("brandon", json.dumps(zones).replace("\"", "'"), "berookhim")
         return jsonify(zones)
