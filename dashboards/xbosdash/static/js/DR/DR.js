@@ -29,6 +29,10 @@ $(document).ready(function() {
 	}
 
 	function setZoneCards() {
+		var azlen = allZones.length
+		var ztext = " zone";
+		if (azlen != 1) { ztext += "s"; }
+		$("#sort-by-text").html("Sort <b>" + allZones.length + "</b>" + ztext);
 		var s = "<div class='row' style='display: flex; flex-wrap: wrap; justify-content: space-between;'>";
 		$.each(allZones, function(i, v) {
 			zonesToInd[v] = i;
@@ -281,6 +285,7 @@ $(document).ready(function() {
 	var buildingRequest = null;
     // This is the function when "Run" button is clicked in the DR page.
 	$("#bldng-btn").click(function() {
+		bldngChart.showLoading();
 		$("#bldng-config").hide();
 		$("#sim-loader").show();
 		// https://stackoverflow.com/questions/2275274/
@@ -301,23 +306,121 @@ $(document).ready(function() {
                 // console.log("simulation", d);
                 var a = processResp(d);
                 for (var x = 0; x < a.length; x += 1) { bldngChart.addSeries(a[x], false); }
-                $("#bldng-reset").addClass("scale-in");
-                simSuccess(bldngChart, "bldng");
-                bldngChart.hideLoading();
+                // $("#bldng-reset").addClass("scale-in");
+                // simSuccess(bldngChart, "bldng");
+                // bldngChart.hideLoading();
                 bldngChart.redraw();
             },
             "error": function(d) {
                 console.log("url: ", "http://0.0.0.0:5000/api/simulation/" + lambdaValue + "/" + getTodayDate());
                 console.error("simulation error: ", d);
+            },
+            "complete": function(d) {
+            	// simSuccess(zoneChart, "zone");
+	            setTimeout(function() { simSuccess(bldngChart, "bldng"); }, 1500);
             }
         });
 		// return toRet;
 	});
 
+	function processResp(j) {
+		var toRet = [];
+		for (var z in j) {
+			var lst = [];
+			// var prevKeys = [];
+			var st;
+			for (var s in j[z]) {
+				// console.log(z);
+				// console.log(j[z])
+				// console.log(s);
+				// console.log("");
+				var toAdd = new Object();
+				toAdd.id = clean(z).toLowerCase() + " sim-" + s;
+				toAdd.name = toAdd.id;
+				// console.log(toAdd)
+				if (s == "state") {
+					// toAdd.data = j[z][s];
+					// st = toAdd;
+				} else {
+					// var ret = makeData(j[z][s], toAdd.id);
+					// toAdd.data = ret[0];
+					// var k = ret[1];
+					// if (k.length > prevKeys.length) { prevKeys = k; }
+					toAdd.data = makeData(j[z][s], toAdd.id);
+					lst.push(toAdd);
+				}
+			}
+			// var cleaned = clean(z); lst[0].name = cleaned; lst[0].id = cleaned;
+			// this represents the original zone
+			var cleaned = clean(z);
+			// st.data = makeState(st.data, prevKeys, st.id);
+			// st.yAxis = 1;
+			// st.step = "center";
+			// lst.push(st);
+			for (var i = 0; i < lst.length; i += 1) {
+				// if (i != 0) { lst[i].linkedTo = cleaned; }
+				lst[i].linkedTo = cleaned;
+				lst[i].dashStyle = lines[i];
+				lst[i].color = c[i];
+				lst[i].lineWidth = ws[i];
+			}
+			if (!toRet.length) { lst[0].visible = true; }
+			else { lst[0].visible = false; }
+			$.merge(toRet, lst);
+		}
+		return toRet;
+	}
+
+	function makeData(j, n) {
+		var toRet = [];
+		// var ret = [];
+		for (var k in j) {
+			// console.log(k);
+			// console.log(j);
+			// console.log(n);
+			// ret.push(k);
+			var toAdd = new Object();
+			toAdd.name = getTime(k/1000, 5);
+			toAdd.id = n + " " + toAdd.name;
+			toAdd.y = myRound(j[k], 2);
+			toRet.push(toAdd);
+		}
+		// return [toRet, ret];
+		// console.log(toRet);
+		return toRet;
+	}
+
+	function clean(s, shorten=false, amt=null) {
+		s = s.replace("-", "_");
+		s = s.split("_");
+		if (shorten && amt) { for (var i in s) { if (s[i].length > amt) { s[i] = s[i].slice(0, amt); }}}
+		for (var i in s) { s[i] = s[i].charAt(0).toUpperCase() + s[i].slice(1).toLowerCase(); }
+		s = s.join("");
+		s = s.replace("Zone", "").replace("ZONE", "").replace("zone", "");
+		s = s.replace("HVAC", "").replace("Hvac", "").replace("hvac", "");
+		return s;
+	}
+
+	// http://www.jacklmoore.com/notes/rounding-in-javascript/
+	function myRound(val, dec) { return Number(Math.round(val+'e'+dec)+'e-'+dec); }
+
+	function getTime(et, x) { return toDate(et).toString().split(" ")[4].slice(0, x); }
+
+	function toDate(et) {
+		var d = new Date(0);
+		d.setUTCSeconds(et);
+		return d;
+	}
+
+	let c = ["#42A5F5", "#EF5350", "#66bb6a", "#8d6e63", "#000000", "#e6194b", "#008080", "#911eb4", "#0082c8"];
+	let lines = ["ShortDot", "ShortDot", "ShortDot", "ShortDot", "Solid", "ShortDash", "Dot", "ShortDot", "Solid"];
+	let ws = [2, 2, 2, 2, 2, 2, 2, 2, 2];
+	let CLEN = 9;
 
 	var zoneRequest = null;
 	$(".zbtn").each(function(i) {
 		$(this).click(function() {
+			zoneChart.showLoading();
 			$("#zone-config").hide();
 			$("#sim-loader").show();
 			// console.log(i);
@@ -330,19 +433,41 @@ $(document).ready(function() {
 			var lambdaValue = parseFloat($("#z" + i + "range").prop("value")).toString();
 
 			zoneRequest = $.ajax({
-	            "url": "http://0.0.0.0:5000/api/simulationREMOVE/" + lambdaValue + "/" + getTodayDate() + "/hvac_zone_" + zonesToInd[i],
+	            "url": "http://0.0.0.0:5000/api/simulation/" + lambdaValue + "/" + getTodayDate() + "/" + zonesToInd[i],
 	            "success": function(d) {
-	                // console.log("simulation", d);
-	                var a = processResp(d);
-	                for (var x = 0; x < a.length; x += 1) { zoneChart.addSeries(a[x], false); }
-	                $("#zone-reset").addClass("scale-in");
-	                simSuccess(zoneChart, "zone");
-	                zoneChart.hideLoading();
-	                zoneChart.redraw();
+	                // // console.log("simulation", d);
+	                // var a = processResp(d);
+	                // for (var x = 0; x < a.length; x += 1) { zoneChart.addSeries(a[x], false); }
+	                // // $("#zone-reset").addClass("scale-in");
+	                // // zoneChart.hideLoading();
+	                // zoneChart.redraw();
+	                // d = {"hvac_zone_back_hallway": {"cooling": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "heating": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "inside": {"1565938800000": 66.0, "1565939700000": 65.75279985906522, "1565940600000": 65.43783332903159, "1565941500000": 65.25098112112512, "1565942400000": 65.45344733595263}, "outside": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "state": {"1565938800000": "off", "1565939700000": "off", "1565940600000": "off", "1565941500000": "off", "1565942400000": "off"}}};
+	            	console.log(d);
+	            	if (d["error"]) { return; }
+	            	var a = processResp(d);
+	            	console.log(a);
+	            	for (var x = 0; x < a.length; x += 1) { zoneChart.addSeries(a[x], false); }
+	            	zoneChart.redraw();
+
+	                console.log("url success: ", "http://0.0.0.0:5000/api/simulation/" + lambdaValue + "/" + getTodayDate() + "/" + zonesToInd[i]);
+	                console.error("simulation success: ", d);
+	                // setTimeout(function() { console.log("ignore") }, 1000);
 	            },
 	            "error": function(d) {
-	                console.log("url: ", "http://0.0.0.0:5000/api/simulationREMOVE/" + lambdaValue + "/" + getTodayDate() + "/hvac_zone_" + zonesToInd[i]);
+	            	d = {"hvac_zone_back_hallway": {"cooling": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "heating": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "inside": {"1565938800000": 66.0, "1565939700000": 65.75279985906522, "1565940600000": 65.43783332903159, "1565941500000": 65.25098112112512, "1565942400000": 65.45344733595263}, "outside": {"1565938800000": 30, "1565939700000": 30, "1565940600000": 30, "1565941500000": 30, "1565942400000": 30}, "state": {"1565938800000": "off", "1565939700000": "off", "1565940600000": "off", "1565941500000": "off", "1565942400000": "off"}}};
+	            	console.log(d);
+	            	var a = processResp(d);
+	            	console.log(a);
+	            	for (var x = 0; x < a.length; x += 1) { zoneChart.addSeries(a[x], false); }
+	            	zoneChart.redraw();
+
+	                console.log("url error: ", "http://0.0.0.0:5000/api/simulationREMOVE/" + lambdaValue + "/" + getTodayDate() + "/" + zonesToInd[i]);
 	                console.error("simulation error: ", d);
+	                // setTimeout(function() { console.log("ignore") }, 1000);
+	            },
+	            "complete": function(d) {
+	            	// simSuccess(zoneChart, "zone");
+	            	setTimeout(function() { simSuccess(zoneChart, "zone"); }, 1500);
 	            }
        		});
 		// var toRet = new Object();
@@ -370,8 +495,9 @@ $(document).ready(function() {
 	});
 
 	function simSuccess(x, y) {
+		x.hideLoading();
 		// x.setTitle({ text: "Simulated" });
-		x.setTitle({ text: "Simulated" }, { text: "Simulated streams are dotted" });
+		// x.setTitle({ text: "Simulated" }, { text: "Simulated streams are dotted" });
 		postSim(y);
 	}
 

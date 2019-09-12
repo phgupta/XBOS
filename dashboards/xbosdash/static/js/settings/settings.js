@@ -41,7 +41,7 @@ $(document).ready(function() {
 	function doSub(x) {
 		var dep;
 		$.ajax({
-			"url": "http://127.0.0.1:5000/api/department",
+			"url": "http://0.0.0.0:5000/api/department",
 			"type": "GET",
 			"dataType": "json",
 			"success": function(d) {

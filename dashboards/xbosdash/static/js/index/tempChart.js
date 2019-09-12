@@ -37,6 +37,7 @@ $(document).ready(function() {
         for (var z in j) {
             var toAdd = new Object();
             toAdd.name = clean(z);
+            // toAdd.name = z;
             toAdd.id = toAdd.name;
             toAdd.data = makeData(j[z], toAdd.name, sums, first, pa);
             toRet.push(toAdd);
@@ -111,7 +112,7 @@ $(document).ready(function() {
         var mean = new Object();
         mean.name = "Average";
         mean.data = stdData(m, pa, mean.name);
-        mean.lineWidth = 2;
+        mean.lineWidth = 1;
         mean.color = "#9e9e9e";
         // mean.showInLegend = false;
 
@@ -305,7 +306,8 @@ $(document).ready(function() {
             "line": {
                 "marker": {
                     "enabled": false,
-                }
+                },
+                "lineWidth": 3
             },
             "series": {
                 "stickyTracking": true,

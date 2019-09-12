@@ -288,7 +288,7 @@ $(document).ready(function() {
 
 	var cgn = localStorage.getItem("curr-group-name");
 	if (cgn != null) { readIn(JSON.parse(localStorage.getItem(cgn + "-group"))); }
-	else { $("#groupName").prop("value", JSON.parse(localStorage.getItem("zones-for-group")).join(", ")); }
+	else { $("#groupName").prop("value", JSON.parse(localStorage.getItem("zones-for-group")).join(", ").slice(0, 45)); }
 
 	function smartReadOut(name) {
 		if (nameUsed(name)) { safeToast("Group name must be unique.", "rounded red"); return; }
@@ -413,8 +413,8 @@ $(document).ready(function() {
 		var gn = $("#groupName").prop("value").trim();
 		if (gn.length < 3) {
 			safeToast("Group Name must be at least 3 characters.", "rounded red");	
-		} else if (gn.length > 20) {
-			safeToast("Group Name must be 20 characters or fewer.", "rounded red");
+		} else if (gn.length > 45) {
+			safeToast("Group Name must be 45 characters or fewer.", "rounded red");
 		} else {
 			smartReadOut(gn);
 		}

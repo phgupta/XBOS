@@ -18,6 +18,8 @@ $(document).ready(function() {
 	$("#hvac-loader").show();
 	$("#hvac-loader").addClass("scale-in");
 
+	// (TODO) can't use this once override is allowed
+	// unless zone names are already shortened
 	function cleanUp(s) { return s.replace("hvac_zone_", "").replace("_", " "); }
 
 	/* null first element because svg attributes are indexed from 1 */
@@ -34,6 +36,7 @@ $(document).ready(function() {
 			for (var o in d) {
 				// console.log(o);
 				zoneNames.push(cleanUp(o));
+				// zoneNames.push(o);
 			}
 			// console.log(zoneNames);
 			/* gets rid of the loader and shows the accordian */

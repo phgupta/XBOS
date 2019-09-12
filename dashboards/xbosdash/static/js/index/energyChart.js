@@ -242,7 +242,8 @@ $(document).ready(function() {
 			"line": {
 				"marker": {
 					"enabled": false
-				}
+				},
+				"lineWidth": 3
 			}
 		},
 		"credits": {
